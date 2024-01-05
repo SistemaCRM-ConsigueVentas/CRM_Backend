@@ -11,9 +11,10 @@ from django.db import transaction
 from datetime import timedelta
 from rest_framework.pagination import PageNumberPagination
 
+#------ AUTHENTICATIONS URLs ------#
 
 # Vista para el registro de usuarios
-class UserRegistrationView(generics.CreateAPIView):
+class UserRegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
 
@@ -24,7 +25,7 @@ class UserRegistrationView(generics.CreateAPIView):
         else:
             serializer.save()
 
-# Vista para el login
+# Vista para el login de usuarios
 class UserLoginView(generics.CreateAPIView):
     serializer_class = UserLoginSerializer
 
@@ -62,7 +63,7 @@ class UserLoginView(generics.CreateAPIView):
             return Response({'error': 'Credenciales inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
 
 #Vista para el Refresh Token
-class RefreshTokenView(TokenRefreshView):
+class UserRefreshTokenView(TokenRefreshView):
     def post(self, request):
         refresh_token = request.headers.get('Authorization', '').split(' ')[-1]
 
@@ -77,8 +78,8 @@ class RefreshTokenView(TokenRefreshView):
             'access': str(serializer.validated_data['access']),
         }) 
         
-# Vista para el cambio de contraseña
-class ChangePasswordView(generics.UpdateAPIView):
+# Vista para el cambio de contraseña del usuario
+class UserChangePasswordView(generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer
     permission_classes = [IsAuthenticated]
 
@@ -103,6 +104,8 @@ class ChangePasswordView(generics.UpdateAPIView):
 
         return Response({'message': 'Contraseña cambiada exitosamente.'}, status=status.HTTP_200_OK)
     
+#-------------END---------------------#
+    
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserListSerializer
@@ -113,20 +116,3 @@ class UserForId(generics.RetrieveAPIView):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
     lookup_field = 'id'
-    
-class CoreList(generics.ListAPIView):
-    queryset = Core.objects.all()
-    serializer_class = CoreListSerializer
-    permission_classes = [IsAuthenticated]
-    
-class DepartmentList(generics.ListAPIView):
-    queryset = Department.objects.all()
-    serializer_class = DepartmentListSerializer
-    permission_classes = [IsAuthenticated]
-
-class PositionList(generics.ListAPIView):
-    queryset = Position.objects.all()
-    serializer_class = PositionListSerializer
-    permission_classes = [IsAuthenticated]
-    
-    

@@ -2,51 +2,6 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
-#Modelo Department
-class Department(models.Model):
-    id_department = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=40)
-    
-    def __str__(self):
-        return self.name
-
-#Modelo Core
-class Core(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=40)
-    
-    # Clave foránea que establece una relación con el modelo Department
-    department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return self.name
-
-#Modelo Position
-class Position(models.Model):
-    id_position = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=60)
-    
-    # Clave foránea que establece una relación con el modelo Department y Core
-    department_id = models.ForeignKey(Department, on_delete=models.CASCADE)
-    cores_id = models.ForeignKey(Core, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return self.name
-
-#Modelo Employees 
-# class Employees(models.Model):
-#     employee_id = models.AutoField(primary_key=True)
-#     name = models.CharField(max_length=255)
-#     surname = models.CharField(max_length=255)
-#     dni = models.CharField(max_length=12)
-#     cellphone = models.CharField
-    
-#     # Clave foránea que establece una relación con el modelo Position
-#     id_position = models.ForeignKey(Position, on_delete=models.CASCADE)
-
-#     def __str__(self):
-#         return self.name
-
 #Gestor de usuarios personalizado
 class UserManager(BaseUserManager):
     # Método para crear un usuario regular
@@ -74,16 +29,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=50, unique=True)
     password = models.CharField(max_length=100)
     
-    # Clave foránea que establece una relación con el modelo Position
-    position_id = models.ForeignKey(Position, on_delete=models.CASCADE)
-
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['nombre', 'apellidos', 'position_id']
+    REQUIRED_FIELDS = ['nombre', 'apellidos']
 
     def __str__(self):
         return self.nombre
