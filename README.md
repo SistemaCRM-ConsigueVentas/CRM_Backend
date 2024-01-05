@@ -20,7 +20,7 @@ Documentación: https://documenter.getpostman.com/view/32158417/2s9YsGjDgn
 
 Este proyecto utiliza las siguientes tecnologías:
 
-- Django 5.0.1
+- Django 3.2.23
 - djangorestframework
 - Python 3.11.0 importante tener esta version
 
