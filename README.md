@@ -10,7 +10,8 @@
 `http://localhost:8000/app`.
 
 ## Postman
-Documentación: https://documenter.getpostman.com/view/32158417/2s9YsGjDgn
+Documentación(Users y Auth): https://documenter.getpostman.com/view/32158417/2s9YsGjDgn
+Documentación (Cliente y Ventas): https://documenter.getpostman.com/view/23822071/2s9YsKfXXa
 ---
 
 ## Módulos
