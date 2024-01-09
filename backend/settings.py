@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'backendCV',
+    'api',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework.exceptions',
@@ -142,7 +142,7 @@ EMAIL_HOST = 'smtp.gmail.com'  #  Utilización del servidor SMTP de Gmail
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')  # Usuario de donde se enviaran los correos electronicos
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')  # Llave secreta de google 
 
-AUTH_USER_MODEL = 'backendCV.User' # Indicamos el modelo de authentication para toda la api
+AUTH_USER_MODEL = 'api.User' # Indicamos el modelo de authentication para toda la api
 
 
 
