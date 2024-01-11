@@ -1,11 +1,11 @@
 from django.db import models
-from api.enums.DocumentTypeEnums import DocumentTypeEnum
+from api.enums.DocumentTypeEnums import DocumentTypeEnums
 
 class Client(models.Model):
     clientID = models.AutoField(primary_key=True)
     name = models.CharField(max_length=30)
     lastname = models.CharField(max_length=40)
-    documentType = models.CharField(max_length=1, choices=[(e.value, e.name) for e in DocumentTypeEnum])
+    documentType = models.CharField(max_length=1, choices=[(e.value, e.name) for e in DocumentTypeEnums])
     documentNumber = models.CharField(max_length=14, unique=True)
     email = models.CharField(max_length = 30)
     cellNumber = models.CharField(max_length = 12)
