@@ -5,3 +5,4 @@ class DocumentTypeEnums(Enum):
     CEDULA = 1
     PASAPORTE = 2
     OTRO = 3
+
