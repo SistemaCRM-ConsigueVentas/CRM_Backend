@@ -5,9 +5,8 @@ from api.enums.PaymentMethodEnums import PaymentMethodEnums
 class Sale(models.Model):
     saleID = models.AutoField(primary_key=True)
     date = models.DateField()
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_method = models.CharField(max_length=24, choices=[(e.value, e.name) for e in PaymentMethodEnums])
-    status = models.CharField(max_length = 20)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    paymentType = models.CharField(max_length=1, choices=[(e.value, e.name) for e in PaymentMethodEnums])
     
     #clave foránea con cliente
     client = models.ForeignKey(Client, on_delete = models.CASCADE)
@@ -17,4 +16,4 @@ class Sale(models.Model):
     updated_at = models.DateTimeField(auto_now=True)#Fecha de actualización
 
     def __str__(self):
-        return self.dni
+        return str(self.saleID)
