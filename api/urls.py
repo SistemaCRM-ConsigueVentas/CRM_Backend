@@ -13,7 +13,8 @@ urlpatterns = [
     #------ USER URLs ------#
     path('users', views.UserListView.as_view(), name='user-list'),
     path('users/<int:id>', views.UserForIdView.as_view(), name='user-detail'),
-    # path('users/delete/<int:id>', views.UserDeleteView.as_view(), name='user-delete'),
+    path('users/update/<int:id>', views.UserUpdateView.as_view(), name='user-update'),
+    path('users/delete/<int:id>', views.UserDeleteView.as_view(), name='user-delete'),
     
     
     #------ CLIENT URLs #------#

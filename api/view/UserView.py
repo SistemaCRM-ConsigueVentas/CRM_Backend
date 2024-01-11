@@ -104,7 +104,7 @@ class UserChangePasswordView(generics.UpdateAPIView):
     
 # Vista para obtener los datos del usuario authenticado
 class UserProfileView(generics.RetrieveAPIView):
-    serializer_class = UserListSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
 
@@ -125,18 +125,37 @@ class UserListPagination(PageNumberPagination):
 
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
-    serializer_class = UserListSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = UserListPagination
     
 class UserForIdView(generics.RetrieveAPIView):
-    serializer_class = UserListSerializer
+    serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
     lookup_field = 'id'
 
-# class UserDeleteView(generics.DestroyAPIView):
-#     serializer_class = UserListSerializer
-#     queryset = User.objects.all()
-#     permission_classes = [IsAuthenticated]
-#     lookup_field = 'id'
+
+class UserUpdateView(generics.UpdateAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
+
+    def update(self, request, *args, **kwargs):
+        # No permitir la actualización de la contraseña directamente
+        if 'password' in request.data:
+            return Response({'error': 'No se puede actualizar la contraseña directamente.'}, status=status.HTTP_400_BAD_REQUEST)
+        return super().update(request, *args, **kwargs)
+    
+class UserDeleteView(generics.DestroyAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.is_active = False  # Desactivar la cuenta
+        instance.save()
+        return Response({'detail': 'La cuenta ha sido desactivada.'}, status=status.HTTP_200_OK)

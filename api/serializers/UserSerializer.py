@@ -27,10 +27,8 @@ class ChangePasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField(write_only=True)
 
 # Serializer para el modelo User (List User)
-class UserListSerializer(serializers.ModelSerializer):   
+class UserSerializer(serializers.ModelSerializer):   
     role_name = serializers.CharField(source="id_role.name",read_only=True)
     class Meta:
         model = User
-        fields = ['id','email','name','lastname','role_name','username','document_type','created_at','updated_at']
-
-
+        fields = ['id','email','name','lastname','role_name','username','document_type','document_number','created_at','updated_at','is_active']
