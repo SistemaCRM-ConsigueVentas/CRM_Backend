@@ -10,6 +10,10 @@ urlpatterns = [
     path('auth/forgotpassword/',include('django_rest_passwordreset.urls'),name="user_forgotpassword"),#Recuperar la contraseña
     path('auth/refresh-token', views.UserRefreshTokenView.as_view(), name='user_refreshtoken'),
 
+    #------ ROLE URLs ------#
+    path('roles', views.RoleListCreateView.as_view(), name='role-list'),
+    path('roles/create', views.RoleListCreateView.as_view(), name='role-create'),
+
     #------ USER URLs ------#
     path('users', views.UserListView.as_view(), name='user-list'),
     path('users/<int:id>', views.UserForIdView.as_view(), name='user-detail'),
