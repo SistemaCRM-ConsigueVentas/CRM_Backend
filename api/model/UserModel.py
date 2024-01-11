@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from api.model.RoleModel import Role
+from api.enums.DocumentTypeEnums import DocumentTypeEnums
 #Gestor de usuarios personalizado
 class UserManager(BaseUserManager):
     # Método para crear un usuario regular
@@ -27,10 +28,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=100)
     name = models.CharField(max_length=30)
     lastname = models.CharField(max_length=50)
+    document_type = models.CharField(max_length=10,choices=[(e.value,e.name) for e in DocumentTypeEnums])
+    document_number = models.CharField(max_length=20,unique=True)
+    address = models.CharField(max_length=200)
+    phone = models.CharField(max_length=30)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    # id_role = models.ForeignKey(Role, null=True, blank=True)
-    id_role = models.ForeignKey(Role, on_delete=models.CASCADE)
+    
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)
 
     created_at = models.DateTimeField(auto_now_add=True)#Fecha de creacion
     updated_at = models.DateTimeField(auto_now=True)#Fecha de actualización

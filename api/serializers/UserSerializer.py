@@ -8,7 +8,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'name', 'lastname', 'email', 'username', 'password']
+        fields = '__all__'
+        # fields = ['id', 'name', 'lastname', 'email', 'username', 'password']
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
@@ -30,6 +31,6 @@ class UserListSerializer(serializers.ModelSerializer):
     role_name = serializers.CharField(source="id_role.name",read_only=True)
     class Meta:
         model = User
-        fields = ['id','email','name','lastname','role_name','username','created_at','updated_at']
+        fields = ['id','email','name','lastname','role_name','username','document_type','created_at','updated_at']
 
 
