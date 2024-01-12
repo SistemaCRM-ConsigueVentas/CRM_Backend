@@ -31,4 +31,4 @@ class UserSerializer(serializers.ModelSerializer):
     role_name = serializers.CharField(source="id_role.name",read_only=True)
     class Meta:
         model = User
-        fields = ['id','email','name','lastname','role_name','username','document_type','document_number','created_at','updated_at','is_active']
+        fields = ['id','email','name','lastname','role_name','username','document_type','document_number','is_staff','is_superuser','address','phone','created_at','updated_at','is_active']

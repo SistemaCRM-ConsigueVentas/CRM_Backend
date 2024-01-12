@@ -135,7 +135,6 @@ class UserForIdView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     lookup_field = 'id'
 
-
 class UserUpdateView(generics.UpdateAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
