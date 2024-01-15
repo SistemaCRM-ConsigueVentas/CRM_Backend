@@ -14,17 +14,8 @@ urlpatterns = [
     path('roles', views.RoleListCreateView.as_view(), name='role-list'),
     path('roles/create', views.RoleListCreateView.as_view(), name='role-create'),
 
-    #------ GROUP URLs  (para los grupos de permisos ejemplo(administrador,empleado))------#
-    path('groups',views.GroupListView.as_view(), name='group-list'),
-    path('groups/create',views.GroupCreateView.as_view(), name='group-create'),
-
-    #------ PERMISSIONS URLs  (para los permisos de cada modelo ejemplo(crear empleado,editar empleado ,etc))------#
-    path('permissions',views.PermissionsListView.as_view(), name='permission-list'),
-    # path('groups/create',views.GroupCreateView.as_view(), name='group-create'),
-
     #------ USER URLs ------#
     path('users', views.UserListView.as_view(), name='user-list'),
-    path('users/create', views.UserCreateView.as_view(), name='user-create'),
     path('users/<int:id>', views.UserForIdView.as_view(), name='user-detail'),
     path('users/update/<int:id>', views.UserUpdateView.as_view(), name='user-update'),
     path('users/delete/<int:id>', views.UserDeleteView.as_view(), name='user-delete'),
