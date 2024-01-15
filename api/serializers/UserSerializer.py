@@ -8,8 +8,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
-        # fields = ['id', 'name', 'lastname', 'email', 'username', 'password']
+        # fields = '__all__'
+        fields = ['id', 'name', 'lastname', 'email', 'username', 'password','document_type','document_number','address','phone']
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
@@ -28,7 +28,14 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 # Serializer para el modelo User (List User)
 class UserSerializer(serializers.ModelSerializer):   
-    role_name = serializers.CharField(source="id_role.name",read_only=True)
+    role_name = serializers.CharField(source="role.name",read_only=True)
     class Meta:
         model = User
         fields = ['id','email','name','lastname','role_name','username','document_type','document_number','is_staff','is_superuser','address','phone','created_at','updated_at','is_active']
+
+class UserCreateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    class Meta:
+        model = User
+        fields = '__all__'
+        
