@@ -34,6 +34,7 @@ urlpatterns = [
     
     #------ PRODUCT URLs ------#
     path('products', views.ProductListCreateView.as_view(), name='product-list'),
+    path('products/', views.ProductListByCategoryView.as_view(), name='product-by-category'),
     path('products/create', views.ProductListCreateView.as_view(), name='product-create'),
     path('products/<int:pk>', views.ProductDetailUpdateDestroy.as_view(), name='product-detail'),
     path('products/update/<int:pk>', views.ProductDetailUpdateDestroy.as_view(), name='product-update'),
