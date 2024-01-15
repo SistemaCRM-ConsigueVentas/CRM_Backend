@@ -1,6 +1,6 @@
 from rest_framework import generics, status
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework_simplejwt.views import TokenRefreshView
@@ -17,12 +17,9 @@ class UserRegisterView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
 
     def perform_create(self, serializer):
-        # Si es un superusuario, establecer el campo role en None
-        if self.request.user.is_superuser:
-            serializer.save(role=None)
-        else:
-            serializer.save()
-
+        role = Role.objects.get(code_name="employee")
+        serializer.save(role=role) #Cuando un usuario se registra por defecto tendra el rol de empleado
+        
 # Vista para el login de usuarios
 class UserLoginView(generics.CreateAPIView):
     serializer_class = UserLoginSerializer
@@ -118,27 +115,46 @@ class UserProfileView(generics.RetrieveAPIView):
 
 #------ USER Views ------#
 
+# Vista para el Crear usuarios
+class UserCreateView(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated,IsAdminUser]
+    serializer_class = UserCreateSerializer
+    queryset = User.objects.all()
+
+    def perform_create(self, serializer):
+        # Si es un superusuario, establecer el campo role en None
+        role = Role.objects.get(id=self.request.data['role'])
+
+        if(role.code_name == "admin"):
+            serializer.save(is_staff=True,is_superuser=True)
+        else:
+            serializer.save()
+
 class UserListPagination(PageNumberPagination):
     page_size = 10  # Número de elementos por página
     page_size_query_param = 'page_size'
     max_page_size = 1000
 
 class UserListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
     pagination_class = UserListPagination
+    def get_queryset(self):
+        # Filtra solo los usuarios con is_active=True
+        return User.objects.filter(is_active=True)
+        
     
 class UserForIdView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
     lookup_field = 'id'
 
 class UserUpdateView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated,IsAdminUser]
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
     lookup_field = 'id'
 
     def update(self, request, *args, **kwargs):
@@ -148,9 +164,9 @@ class UserUpdateView(generics.UpdateAPIView):
         return super().update(request, *args, **kwargs)
     
 class UserDeleteView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated,IsAdminUser]
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
     lookup_field = 'id'
 
     def destroy(self, request, *args, **kwargs):
