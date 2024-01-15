@@ -6,10 +6,10 @@ from api.serializers.CategorySerializer import CategorySerializer
 class CategoryListCreate(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
 # Detalles, actualizar y eliminar categoria
 class CategoryDetailsUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]

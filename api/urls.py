@@ -1,5 +1,4 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
 from api import views
 
 urlpatterns = [
@@ -34,6 +33,7 @@ urlpatterns = [
     
     #------ PRODUCT URLs ------#
     path('products', views.ProductListCreateView.as_view(), name='product-list'),
+    path('products/', views.ProductListByCategory.as_view(), name='product-by-category'),
     path('products/create', views.ProductListCreateView.as_view(), name='product-create'),
     path('products/<int:pk>', views.ProductDetailUpdateDestroy.as_view(), name='product-detail'),
     path('products/update/<int:pk>', views.ProductDetailUpdateDestroy.as_view(), name='product-update'),
