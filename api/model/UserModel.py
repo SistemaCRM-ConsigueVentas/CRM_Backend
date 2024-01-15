@@ -42,7 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.name
     
-    def save(self, *args, **kwargs):
+    def save(self,*args, **kwargs):
         # Llamar a set_password para encriptar la contraseña al guardar el usuario
         if not self.id:  # Solo si es un nuevo usuario (no actualizar la contraseña en actualizaciones)
             self.set_password(self.password)
