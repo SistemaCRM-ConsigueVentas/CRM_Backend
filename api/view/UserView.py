@@ -140,9 +140,9 @@ class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = UserListPagination
-    def get_queryset(self):
-        # Filtra solo los usuarios con is_active=True
-        return User.objects.filter(is_active=True)
+    # def get_queryset(self):
+    #     # Filtra solo los usuarios con is_active=True
+    #     return User.objects.filter(is_active=True)
         
     
 class UserForIdView(generics.RetrieveAPIView):
