@@ -159,20 +159,24 @@ class UserUpdateView(generics.UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         # No permitir la actualización de la contraseña directamente
-        try:
-            role = Role.objects.get(pk=int(request.data['role'])) 
-            serializer = self.get_serializer(instance=self.get_object(), data=request.data,partial=True)
-            serializer.is_valid(raise_exception=True)
-            if (role.code_name == 'admin'):
-                serializer.save(role=role,is_staff=True,is_superuser=True) #Asignar como administrador
-            elif (role.code_name == 'employee'):
-                serializer.save(role=role,is_staff=False,is_superuser=False) #Quitar el rol de administrador
+        role = request.data.get('role')
+        if role is not None:
+            try:
+                role = Role.objects.get(pk=int(role))
+            # Resto del código...
+                role = Role.objects.get(pk=int(request.data['role'])) 
+                serializer = self.get_serializer(instance=self.get_object(), data=request.data,partial=True)
+                serializer.is_valid(raise_exception=True)
+                if (role.code_name == 'admin'):
+                    serializer.save(role=role,is_staff=True,is_superuser=True) #Asignar como administrador
+                elif (role.code_name == 'employee'):
+                    serializer.save(role=role,is_staff=False,is_superuser=False) #Quitar el rol de administrador
 
-            return Response(serializer.data)
-        except Role.DoesNotExist:
+                return Response(serializer.data)
+            except Role.DoesNotExist:
+                pass
+        else:
             pass
-
-
         if 'password' in request.data:
             return Response({'error': 'No se puede actualizar la contraseña directamente.'}, status=status.HTTP_400_BAD_REQUEST)
         return super().update(request, *args, **kwargs)
