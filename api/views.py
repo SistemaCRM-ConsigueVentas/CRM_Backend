@@ -4,3 +4,5 @@ from api.view.ClientView import *
 from api.view.SaleView import *
 from api.view.GroupPermissionsView import *
 from api.view.PermissionView import *
+from api.view.ProductView import *
+from api.view.CategoryView import *

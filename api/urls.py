@@ -1,4 +1,5 @@
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from api import views
 
 urlpatterns = [
@@ -44,5 +45,20 @@ urlpatterns = [
     path('sales/<int:pk>', views.SaleDetailUpdateDestroyView.as_view(), name='sale-detail'),
     path('sales/update/<int:pk>', views.SaleDetailUpdateDestroyView.as_view(), name='sale-update'),
     path('sales/delete/<int:pk>', views.SaleDetailUpdateDestroyView.as_view(), name='sale-delete'),
+    
+    #------ PRODUCT URLs ------#
+    path('products', views.ProductListCreateView.as_view(), name='product-list'),
+    path('products/', views.ProductListByCategoryView.as_view(), name='product-by-category'),
+    path('products/create', views.ProductListCreateView.as_view(), name='product-create'),
+    path('products/<int:pk>', views.ProductDetailUpdateDestroy.as_view(), name='product-detail'),
+    path('products/update/<int:pk>', views.ProductDetailUpdateDestroy.as_view(), name='product-update'),
+    path('products/delete/<int:pk>', views.ProductDetailUpdateDestroy.as_view(), name='product-delete'),
+
+    #------ CATEGORY URLs ------#
+    path('categories', views.CategoryListCreate.as_view(), name='category-list'),
+    path('categories/create', views.CategoryListCreate.as_view(), name='category-create'),
+    path('categories/<int:pk>', views.CategoryDetailsUpdateDestroy.as_view(), name='category-detail'),
+    path('categories/update/<int:pk>', views.CategoryDetailsUpdateDestroy.as_view(), name='category-update'),
+    path('categories/delete/<int:pk>', views.CategoryDetailsUpdateDestroy.as_view(), name='category-destroy'),
     
 ]
