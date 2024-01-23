@@ -7,4 +7,5 @@ admin.site.register(Role)
 #admin.site.register(Employees)
 admin.site.register(Client)
 admin.site.register(Sale)
-
+admin.site.register(Product)
+admin.site.register(Category)
