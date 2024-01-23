@@ -17,8 +17,8 @@ class UserRegisterView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
 
     def perform_create(self, serializer):
-        role = Role.objects.get(code_name="employee")
-        serializer.save(role=role) #Cuando un usuario se registra por defecto tendra el rol de empleado
+        # role = Role.objects.get(code_name="employee")
+        serializer.save(role=2) #Cuando un usuario se registra por defecto tendra el rol de empleado
         
 # Vista para el login de usuarios
 class UserLoginView(generics.CreateAPIView):
@@ -123,9 +123,10 @@ class UserCreateView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         # Si es un superusuario, establecer el campo role en None
-        role = Role.objects.get(id=self.request.data['role'])
-
-        if(role.code_name == "admin"):
+        role = self.request.data['role']
+        print(self.request.data['username'])
+        print(self.request.data['password'])
+        if(role == 1):
             serializer.save(is_staff=True,is_superuser=True)
         else:
             serializer.save()
@@ -142,8 +143,7 @@ class UserListView(generics.ListAPIView):
     pagination_class = UserListPagination
     # def get_queryset(self):
     #     # Filtra solo los usuarios con is_active=True
-    #     return User.objects.filter(is_active=True)
-        
+    #     return User.objects.filter(is_active=True)       
     
 class UserForIdView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
@@ -161,20 +161,15 @@ class UserUpdateView(generics.UpdateAPIView):
         # No permitir la actualización de la contraseña directamente
         role = request.data.get('role')
         if role is not None:
-            try:
-                role = Role.objects.get(pk=int(role))
-            # Resto del código...
-                role = Role.objects.get(pk=int(request.data['role'])) 
-                serializer = self.get_serializer(instance=self.get_object(), data=request.data,partial=True)
-                serializer.is_valid(raise_exception=True)
-                if (role.code_name == 'admin'):
-                    serializer.save(role=role,is_staff=True,is_superuser=True) #Asignar como administrador
-                elif (role.code_name == 'employee'):
-                    serializer.save(role=role,is_staff=False,is_superuser=False) #Quitar el rol de administrador
+            serializer = self.get_serializer(instance=self.get_object(), data=request.data,partial=True)
+            serializer.is_valid(raise_exception=True)
+            if (role == 1):
+                serializer.save(role=1,is_staff=True,is_superuser=True) #Asignar como administrador
+            elif (role == 2):
+                serializer.save(role=2,is_staff=False,is_superuser=False) #Quitar el rol de administrador
 
-                return Response(serializer.data)
-            except Role.DoesNotExist:
-                pass
+            return Response(serializer.data)
+         
         else:
             pass
         if 'password' in request.data:

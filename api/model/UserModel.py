@@ -3,6 +3,7 @@ from django.contrib.auth.models import UserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from api.model.RoleModel import Role
 from api.enums.DocumentTypeEnums import DocumentTypeEnum
+from api.enums.RoleEnums import RoleEnums
 #Gestor de usuarios personalizado
 # class UserManager(BaseUserManager):
 #     # Método para crear un usuario regular
@@ -22,14 +23,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=100)
     name = models.CharField(max_length=30)
     lastname = models.CharField(max_length=50)
-    document_type = models.CharField(max_length=10,choices=[(e.value,e.name) for e in DocumentTypeEnum])
+    document_type = models.IntegerField([(e.value,e.name) for e in DocumentTypeEnum])
     document_number = models.CharField(max_length=20,unique=True)
     address = models.CharField(max_length=200)
     phone = models.CharField(max_length=30)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     
-    role = models.ForeignKey(Role, on_delete=models.CASCADE, null=True)
+    role = models.IntegerField([(e.value,e.name) for e in RoleEnums])
 
     created_at = models.DateTimeField(auto_now_add=True)#Fecha de creacion
     updated_at = models.DateTimeField(auto_now=True)#Fecha de actualización
@@ -41,9 +42,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.name
-    
-    def save(self,*args, **kwargs):
-        # Llamar a set_password para encriptar la contraseña al guardar el usuario
-        if not self.id:  # Solo si es un nuevo usuario (no actualizar la contraseña en actualizaciones)
-            self.set_password(self.password)
-        super().save(*args, **kwargs)
