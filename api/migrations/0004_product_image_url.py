@@ -7,7 +7,7 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0007_category_product'),
+        ('api', '0003_auto_20240122_0823'),
     ]
 
     operations = [
