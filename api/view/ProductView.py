@@ -12,6 +12,7 @@ class ProductListCreateView(generics.ListCreateAPIView):
 # Listar productos por id de categoría
 class ProductListByCategoryView(generics.ListAPIView):
     serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         category_id = self.request.query_params.get('category', None)

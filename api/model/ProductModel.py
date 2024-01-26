@@ -10,6 +10,7 @@ class Product(models.Model):
     security_stock = models.IntegerField()
     barcode = models.CharField(max_length=100)
     state = models.CharField(max_length=20, choices=[(e.value, e.name) for e in ProductStatusEnums])
+    image_url = models.CharField(max_length=300)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
