@@ -13,6 +13,7 @@ class Client(models.Model):
     
     #auditoría
     created_at = models.DateTimeField(auto_now_add=True)#Fecha de creacion
+    state = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
