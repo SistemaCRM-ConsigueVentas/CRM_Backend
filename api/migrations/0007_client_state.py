@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0002_category_product'),
+        ('api', '0006_alter_category_color'),
     ]
 
     operations = [
