@@ -4,18 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from api.model.RoleModel import Role
 from api.enums.DocumentTypeEnums import DocumentTypeEnum
 from api.enums.RoleEnums import RoleEnums
-#Gestor de usuarios personalizado
-# class UserManager(BaseUserManager):
-#     # Método para crear un usuario regular
-#     def create_user(self, username, password=None, **extra_fields):
-#         if not username:
-#             raise ValueError('El campo username es obligatorio.')
-#         user = self.model(username=username, **extra_fields)
-#         user.set_password(password)
-#         user.save(using=self._db)
-#         return user
-    
-# Modelo de Usuario personalizado
+
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50, unique=True)
@@ -29,7 +18,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=30)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    
     role = models.IntegerField([(e.value,e.name) for e in RoleEnums])
 
     created_at = models.DateTimeField(auto_now_add=True)#Fecha de creacion
