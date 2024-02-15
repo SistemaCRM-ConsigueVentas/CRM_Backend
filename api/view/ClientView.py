@@ -6,10 +6,19 @@ from rest_framework.pagination import PageNumberPagination
 
 #Listar y crear cliente
 class ClientListCreateView(generics.ListCreateAPIView):
-    queryset = Client.objects.all()
     serializer_class = ClientSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = PageNumberPagination
+
+    def get_queryset(self):
+        queryset = Client.objects.all()
+        search_param = self.request.query_params.get('search', None)
+        if search_param:
+            queryset = queryset.filter(
+                name__icontains=search_param) | queryset.filter(
+                lastname__icontains=search_param) | queryset.filter(
+                documentNumber__icontains=search_param)
+        return queryset
 
 #Detalle, actualizar y eliminar cliente
 class ClientDetailUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
