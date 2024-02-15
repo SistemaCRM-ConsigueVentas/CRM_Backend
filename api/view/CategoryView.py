@@ -9,12 +9,14 @@ class CategoryListCreate(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
 
 # Detalles, actualizar y eliminar categoria
 class CategoryDetailsUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
 
     def perform_destroy(self, instance):
         products_related = instance.product_set.count()

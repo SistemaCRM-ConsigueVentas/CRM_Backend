@@ -1,6 +1,6 @@
 from api.models import Product
 from api.serializers.ProductSerializer import ProductSerializer
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, pagination
 from rest_framework.response import Response
 
 # Listar y crear productos
@@ -8,6 +8,7 @@ class ProductListCreateView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = pagination.PageNumberPagination
 
     def list(self, request, *args, **kwargs):
         product_name = self.request.query_params.get('name')
@@ -20,8 +21,10 @@ class ProductListCreateView(generics.ListCreateAPIView):
             else:
                 queryset = Product.objects.all()
 
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
+            page = self.paginate_queryset(queryset)
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        
         except Exception as e:
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
