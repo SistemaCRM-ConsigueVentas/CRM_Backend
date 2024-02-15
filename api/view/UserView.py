@@ -131,19 +131,11 @@ class UserCreateView(generics.CreateAPIView):
         else:
             serializer.save()
 
-class UserListPagination(PageNumberPagination):
-    page_size = 10  # Número de elementos por página
-    page_size_query_param = 'page_size'
-    max_page_size = 1000
-
 class UserListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    pagination_class = UserListPagination
-    # def get_queryset(self):
-    #     # Filtra solo los usuarios con is_active=True
-    #     return User.objects.filter(is_active=True)       
+    pagination_class = None
     
 class UserForIdView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
