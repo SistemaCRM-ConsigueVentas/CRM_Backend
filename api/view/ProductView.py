@@ -10,6 +10,14 @@ class ProductListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = pagination.PageNumberPagination
 
+from rest_framework.pagination import PageNumberPagination
+
+class ProductListCreateView(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = pagination.PageNumberPagination
+
     def list(self, request, *args, **kwargs):
         product_name = self.request.query_params.get('name')
         
@@ -21,12 +29,25 @@ class ProductListCreateView(generics.ListCreateAPIView):
             else:
                 queryset = Product.objects.all()
 
+            # Paginate queryset
             page = self.paginate_queryset(queryset)
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+
+            # Get total pages
+            total_pages = self.paginator.page.paginator.num_pages
+
+            return Response({
+                'pagination': {
+                    'total_pages': total_pages,
+                    'current_page': self.paginator.page.number,
+                    'count': self.paginator.page.paginator.count
+                },
+                'data': serializer.data
+            })
         
         except Exception as e:
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # Listar productos por id de categoría
 class ProductListByCategoryView(generics.ListAPIView):
