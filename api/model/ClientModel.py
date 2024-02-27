@@ -1,6 +1,7 @@
 from django.db import models
 from api.enums.DocumentTypeEnums import DocumentTypeEnum
 
+#Modelo Clientes
 class Client(models.Model):
     clientID = models.AutoField(primary_key=True)
     name = models.CharField(max_length=30)
