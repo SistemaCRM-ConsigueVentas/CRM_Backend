@@ -10,14 +10,6 @@ class ProductListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = pagination.PageNumberPagination
 
-from rest_framework.pagination import PageNumberPagination
-
-class ProductListCreateView(generics.ListCreateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    pagination_class = pagination.PageNumberPagination
-
     def list(self, request, *args, **kwargs):
         product_name = self.request.query_params.get('name')
         
@@ -55,17 +47,15 @@ class ProductListByCategoryView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        category_id = self.request.query_params.get('category', None)
+        category_ids = self.request.query_params.getlist('category', None)
 
-        try:
-            category_id = int(category_id)
-        except (ValueError, TypeError):
-            return Response({"message": "The id must be a valid integer"}, status=400)
+        if not category_ids:
+            return Response({"message": "At least one category ID is required"}, status=400)
 
-        queryset = Product.objects.filter(category=category_id)
+        queryset = Product.objects.filter(category__in=category_ids)
 
-        if queryset.count() == 0:
-            return Response({"message": "There are no products for this category"}, status=404)
+        if not queryset.exists():
+            return Response({"message": "There are no products for these categories"}, status=404)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
