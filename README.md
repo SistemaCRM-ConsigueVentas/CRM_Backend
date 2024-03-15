@@ -24,6 +24,7 @@ Este proyecto utiliza las siguientes tecnologías:
 - Django 3.2.23
 - djangorestframework
 - Python 3.11.0 importante tener esta version
+- https://www.python.org/downloads/release/python-3110/
 
 ## Cómo levantar el proyecto
 
