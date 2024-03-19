@@ -5,10 +5,10 @@ from api.model.RoleModel import Role
 from api.enums.DocumentTypeEnums import DocumentTypeEnum
 from api.enums.RoleEnums import RoleEnums
 
+#Modelo Usuarios
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50, unique=True)
-    email = models.EmailField(unique=True)
     password = models.CharField(max_length=100)
     name = models.CharField(max_length=30)
     lastname = models.CharField(max_length=50)
@@ -16,6 +16,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     document_number = models.CharField(max_length=20,unique=True)
     address = models.CharField(max_length=200)
     phone = models.CharField(max_length=30)
+    image= models.CharField(max_length=150)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     role = models.IntegerField([(e.value,e.name) for e in RoleEnums])
