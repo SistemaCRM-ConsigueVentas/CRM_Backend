@@ -1,6 +1,6 @@
 from django.db import models
-from .PromotionModel import PromotionModel
-from .CategoryModel import CategoryModel
+from api.model.PromotionModel import Promotion
+from api.model.CategoryModel import Category
 
 class Service(models.Model):
     id = models.AutoField(primary_key=True)
@@ -15,8 +15,8 @@ class Service(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     # conecciones
-    promotion = models.ForeignKey(PromotionModel, on_delete=models.SET_NULL, null=True, blank=True)
-    category = models.ForeignKey(CategoryModel, on_delete=models.CASCADE)
+    promotion = models.ForeignKey(Promotion, on_delete=models.SET_NULL, null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
