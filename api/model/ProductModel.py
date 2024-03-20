@@ -12,7 +12,7 @@ class Product(models.Model):
     stock_security = models.IntegerField()
     price = models.FloatField()
     rating = models.CharField(max_length=20)
-    image_url = models.CharField(max_length=150)
+    image = models.CharField(max_length=150)
     status = models.IntegerField(choices=[(e.value, e.name) for e in ProductStatusEnums])
     
 
