@@ -60,4 +60,17 @@ urlpatterns = [
     path('categories/update/<int:pk>', views.CategoryDetailsUpdateDestroy.as_view(), name='category-update'),
     path('categories/delete/<int:pk>', views.CategoryDetailsUpdateDestroy.as_view(), name='category-destroy'),
     
+    #------ PROMOTION URLs ------#
+    path('promotions', views.PromotionListCreate.as_view(), name='promotion-list'),
+    path('promotions/create', views.PromotionListCreate.as_view(), name='promotion-create'),
+    path('promotions/<int:pk>', views.PromotionDetailsUpdateDestroy.as_view(), name='promotion-detail'),
+    path('promotions/update/<int:pk>', views.PromotionDetailsUpdateDestroy.as_view(), name='promotion-update'),
+    path('promotions/delete/<int:pk>', views.PromotionDetailsUpdateDestroy.as_view(), name='promotion-destroy'),
+    
+    #------ SERVICE URLs ------#
+    path('services', views.ServiceListCreate.as_view(), name='service-list'),
+    path('services/create', views.ServiceListCreate.as_view(), name='service-create'),
+    path('services/<int:pk>', views.ServiceDetailsUpdateDestroy.as_view(), name='service-detail'),
+    path('services/update/<int:pk>', views.ServiceDetailsUpdateDestroy.as_view(), name='service-update'),
+    path('services/delete/<int:pk>', views.ServiceDetailsUpdateDestroy.as_view(), name='service-destroy'),
 ]

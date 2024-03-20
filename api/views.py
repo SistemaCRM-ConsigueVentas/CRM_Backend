@@ -6,3 +6,5 @@ from api.view.GroupPermissionsView import *
 from api.view.PermissionView import *
 from api.view.ProductView import *
 from api.view.CategoryView import *
+from api.view.PromotionView import *
+from api.view.ServiceView import *
