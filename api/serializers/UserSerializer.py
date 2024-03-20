@@ -30,7 +30,7 @@ class ChangePasswordSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):   
     class Meta:
         model = User
-        fields = ['id','email','name','lastname','role','username','document_type','document_number','is_staff','is_superuser','address','phone','created_at','updated_at','is_active']
+        fields = ['id','email','name', 'image','lastname','role','username','document_type','document_number','is_staff','is_superuser','address','phone','created_at','updated_at','is_active']
 
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

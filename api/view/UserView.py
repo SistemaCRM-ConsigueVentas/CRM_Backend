@@ -8,6 +8,9 @@ from django.contrib.auth import authenticate
 from datetime import timedelta
 from api.models import *
 from api.serializers.UserSerializer import *     
+from datetime import datetime
+import os
+from django.conf import settings
 
 #------ AUTHENTICATIONS Views ------#
 
@@ -15,10 +18,23 @@ from api.serializers.UserSerializer import *
 class UserRegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
-
+    
+    def upload_image(self):
+        try:
+            image = self.request.data.get('image')
+            folder_path = os.path.join(settings.MEDIA_ROOT,'photos')
+            os.makedirs(folder_path, exist_ok=True)
+            filename = self.request.data.get('document_number') + '.' + image.name.split('.')[-1] #Username mas la extención del archivo
+            with open(os.path.join(folder_path,filename),'wb') as f:
+                f.write(image.read())
+            return f'photos/{filename}'
+        except Exception as e:
+            return Response({"details": f"Error al guardar la imagen: {str(e)}"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
     def perform_create(self, serializer):
+        serializer.validated_data['image'] = self.upload_image()
         # role = Role.objects.get(code_name="employee")
-        serializer.save(role=2) #Cuando un usuario se registra por defecto tendra el rol de empleado
+        serializer.save(role=2) #Cuando un usuario se registra por defecto tendra el rol de empleado    
         
 # Vista para el login de usuarios
 class UserLoginView(generics.CreateAPIView):
@@ -46,7 +62,6 @@ class UserLoginView(generics.CreateAPIView):
                 'username': user.username,
                 'name': user.name,
                 'lastname': user.lastname,
-                'email': user.email,
             }
 
             return Response({
