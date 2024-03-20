@@ -1,5 +1,5 @@
 from django.db import models
-from api.model.ClientModel import Client
+from api.model.CustomerModel import Customer
 from api.enums.PaymentMethodEnums import PaymentMethodEnums
 
 class Sale(models.Model):
@@ -9,7 +9,7 @@ class Sale(models.Model):
     paymentType = models.CharField(max_length=1, choices=[(e.value, e.name) for e in PaymentMethodEnums])
     
     #clave foránea con cliente
-    client = models.ForeignKey(Client, on_delete = models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete = models.CASCADE)
     
     #auditoría
     created_at = models.DateTimeField(auto_now_add=True)#Fecha de creacion

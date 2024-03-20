@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from api.models import *
-from api.serializers.ClientSerializer import *   
+from api.serializers.CustomerSerializer import *   
 from rest_framework.pagination import PageNumberPagination
 
 class PaginationFive(PageNumberPagination):
@@ -9,12 +9,12 @@ class PaginationFive(PageNumberPagination):
 
 #Listar y crear cliente
 class ClientListCreateView(generics.ListCreateAPIView):
-    serializer_class = ClientSerializer
+    serializer_class = CustomerSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = PaginationFive
 
     def get_queryset(self):
-        queryset = Client.objects.all()
+        queryset = Customer.objects.all()
         search_param = self.request.query_params.get('search', None)
         if search_param:
             queryset = queryset.filter(
@@ -25,8 +25,8 @@ class ClientListCreateView(generics.ListCreateAPIView):
 
 #Detalle, actualizar y eliminar cliente
 class ClientDetailUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Client.objects.all()
-    serializer_class = ClientSerializer
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
     permission_classes = [IsAuthenticated]
     
     def perform_destroy(self, instance):
