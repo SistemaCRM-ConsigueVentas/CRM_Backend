@@ -15,7 +15,6 @@ class Product(models.Model):
     image= models.ImageField(upload_to="products")
     status = models.IntegerField(choices=[(e.value, e.name) for e in ProductStatusEnums])
     
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
