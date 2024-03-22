@@ -2,10 +2,31 @@ from api.models import Product
 from api.serializers.ProductSerializer import ProductSerializer
 from rest_framework import generics, permissions, status, pagination
 from rest_framework.response import Response
+import os
+from django.conf import settings
 
-# Listar y crear productos
-
-
+# Crear productos
+class ProductRegisterView(generics.CreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+        
+    def upload_image(self):
+            try:
+                image = self.request.data.get('image')
+                folder_path = os.path.join(settings.MEDIA_ROOT,'products')
+                os.makedirs(folder_path, exist_ok=True)
+                product_name = self.request.data.get('name')
+                filename = product_name.replace(' ', '_').lower() + '.' + image.name.split('.')[-1]
+                with open(os.path.join(folder_path, filename), 'wb') as f:
+                    f.write(image.read())
+                return f'products/{filename}'
+            except Exception as e:
+                return Response({"details": f"Error al guardar la imagen: {str(e)}"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+    def perform_create(self, serializer):
+        serializer.validated_data['image'] = self.upload_image()
+        
+# Listar productos
 class ProductListCreateView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -41,7 +62,8 @@ class ProductListCreateView(generics.ListCreateAPIView):
         
         except Exception as e:
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        
+        
 
 # Listar productos por id de categoría
 class ProductListByCategoryView(generics.ListAPIView):
