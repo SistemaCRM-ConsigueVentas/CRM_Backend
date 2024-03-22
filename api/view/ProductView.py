@@ -4,6 +4,8 @@ from rest_framework import generics, permissions, status, pagination
 from rest_framework.response import Response
 
 # Listar y crear productos
+
+
 class ProductListCreateView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
