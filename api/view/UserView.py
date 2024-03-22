@@ -22,12 +22,16 @@ class UserRegisterView(generics.CreateAPIView):
     def upload_image(self):
         try:
             image = self.request.data.get('image')
-            folder_path = os.path.join(settings.MEDIA_ROOT,'photos')
-            os.makedirs(folder_path, exist_ok=True)
-            filename = self.request.data.get('document_number') + '.' + image.name.split('.')[-1] #Username mas la extención del archivo
-            with open(os.path.join(folder_path,filename),'wb') as f:
-                f.write(image.read())
-            return f'photos/{filename}'
+            if image:
+                folder_path = os.path.join(settings.MEDIA_ROOT, 'photos')
+                os.makedirs(folder_path, exist_ok=True)
+                filename = self.request.data.get('document_number') + '.' + image.name.split('.')[-1]  # Nombre de archivo personalizado
+                with open(os.path.join(folder_path, filename), 'wb') as f:
+                    f.write(image.read())
+                return f'photos/{filename}'
+            else:
+                # Si no se proporciona ninguna imagen, se devuelve la ruta de la imagen predeterminada
+                return f'photos/default.jpeg'
         except Exception as e:
             return Response({"details": f"Error al guardar la imagen: {str(e)}"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
