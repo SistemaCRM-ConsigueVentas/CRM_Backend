@@ -26,8 +26,7 @@ class ProductRegisterView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.validated_data['image'] = self.upload_image()
         
-        
-# Listar Productos
+# Listar productos
 class ProductListCreateView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -63,7 +62,8 @@ class ProductListCreateView(generics.ListCreateAPIView):
         
         except Exception as e:
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-              
+        
+        
 
 # Listar productos por id de categoría
 class ProductListByCategoryView(generics.ListAPIView):

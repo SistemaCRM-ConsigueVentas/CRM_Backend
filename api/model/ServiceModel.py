@@ -16,7 +16,7 @@ class Service(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     # conecciones
-    promotion = models.ForeignKey(Promotion, on_delete=models.SET_NULL, null=True, blank=True)
+    promotion = models.ForeignKey(Promotion, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
