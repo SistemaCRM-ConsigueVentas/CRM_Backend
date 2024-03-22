@@ -4,15 +4,15 @@ from api.enums.ProductStatusEnums import ProductStatusEnums
 
 class Product(models.Model):
     id = models.AutoField(primary_key=True)
-    barcode = models.CharField(max_length=100)
-    name = models.CharField(max_length=100)
+    barcode = models.CharField(max_length=100, unique =True)
+    name = models.CharField(max_length=100, unique =True)
     description = models.TextField()
     brand = models.CharField(max_length=50)
     stock = models.IntegerField()
     stock_security = models.IntegerField()
     price = models.FloatField()
     rating = models.CharField(max_length=20)
-    image = models.CharField(max_length=150)
+    image= models.ImageField(upload_to="products")
     status = models.IntegerField(choices=[(e.value, e.name) for e in ProductStatusEnums])
     
 
