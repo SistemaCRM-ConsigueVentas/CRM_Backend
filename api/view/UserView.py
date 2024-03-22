@@ -11,7 +11,7 @@ from api.serializers.UserSerializer import *
 from datetime import datetime
 import os
 from django.conf import settings
-
+import glob
 #------ AUTHENTICATIONS Views ------#
 
 # Vista para el registro de usuarios
@@ -167,6 +167,7 @@ class UserUpdateView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         # No permitir la actualización de la contraseña directamente
         role = request.data.get('role')
+
         if role is not None:
             serializer = self.get_serializer(instance=self.get_object(), data=request.data,partial=True)
             serializer.is_valid(raise_exception=True)
@@ -181,6 +182,25 @@ class UserUpdateView(generics.UpdateAPIView):
             pass
         if 'password' in request.data:
             return Response({'error': 'No se puede actualizar la contraseña directamente.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Actualizar la foto del usuario
+        if 'image' in request.data:
+            image = request.data.get('image')
+            folder_path = os.path.join(settings.MEDIA_ROOT, 'photos')
+            os.makedirs(folder_path, exist_ok=True)
+            user_instance = self.get_object()
+            # Eliminar imagen anterior
+            if user_instance.image:
+                previous_image_path = os.path.join(settings.MEDIA_ROOT, 'photos', user_instance.document_number + '.*')
+                previous_images = glob.glob(previous_image_path)
+                for prev_image in previous_images:
+                    if os.path.exists(prev_image):
+                        os.remove(prev_image)
+            filename = user_instance.document_number + '.' + image.name.split('.')[-1]
+            with open(os.path.join(folder_path, filename), 'wb') as f:
+                f.write(image.read())
+            user_instance.image = f'photos/{filename}'
+            user_instance.save()
         return super().update(request, *args, **kwargs)
     
 class UserDeleteView(generics.DestroyAPIView):
