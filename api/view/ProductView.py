@@ -5,7 +5,7 @@ from rest_framework.response import Response
 import os
 from django.conf import settings
 
-# Crear productos
+#Crear productos
 class ProductRegisterView(generics.CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
