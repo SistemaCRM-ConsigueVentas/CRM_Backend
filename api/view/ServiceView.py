@@ -18,10 +18,10 @@ class ServiceDetailsUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = None
 
-    def perform_destroy(self, instance):
-        products_related = instance.product_set.count()
-        if products_related > 0:
-            raise serializers.ValidationError("No puedes eliminar esta service porque tiene productos relacionados.")
-
-        instance.delete()
-        return Response({"detail": "Service eliminada con éxito."}, status=status.HTTP_200_OK)
+    #def perform_destroy(self, instance):
+    #    products_related = instance.product_set.count()
+    #    if products_related > 0:
+    #        raise serializers.ValidationError("No puedes eliminar esta service porque tiene productos relacionados.")
+#
+    #    instance.delete()
+    #    return Response({"detail": "Service eliminada con éxito."}, status=status.HTTP_200_OK)
