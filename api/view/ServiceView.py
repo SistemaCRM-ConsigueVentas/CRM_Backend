@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, pagination
 from api.model.ServiceModel import Service
 from api.serializers.ServiceSerializer import ServiceSerializer
 from rest_framework.response import Response
@@ -8,8 +8,8 @@ import os
 import imghdr
 from django.conf import settings
 
-# Listar y crear categorias
-class ServiceListCreate(generics.ListCreateAPIView):
+#Crear services
+class ServiceRegisterView(generics.CreateAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
     
@@ -31,9 +31,46 @@ class ServiceListCreate(generics.ListCreateAPIView):
         if image_path:
             serializer.validated_data['image'] = image_path
         serializer.save()
+        
+# Listar productos
+class ServiceListCreateView(generics.ListCreateAPIView):
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = pagination.PageNumberPagination
+
+    def list(self, request, *args, **kwargs):
+        product_name = self.request.query_params.get('name')
+        
+        try:
+            if product_name:
+                queryset = Service.objects.filter(name__icontains=product_name)
+                if queryset.count() == 0:
+                    return Response({"message": "The searched product does not exist"}, status=404)
+            else:
+                queryset = Service.objects.all()
+
+            # Paginate queryset
+            page = self.paginate_queryset(queryset)
+            serializer = self.get_serializer(page, many=True)
+
+            # Get total pages
+            total_pages = self.paginator.page.paginator.num_pages
+
+            return Response({
+                'pagination': {
+                    'total_pages': total_pages,
+                    'current_page': self.paginator.page.number,
+                    'count': self.paginator.page.paginator.count
+                },
+                'data': serializer.data
+            })
+        
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# Detalles, actualizar y eliminar categoria
+# actualizar y eliminar service
 class ServiceDetailsUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
