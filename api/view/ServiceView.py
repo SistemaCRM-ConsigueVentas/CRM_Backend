@@ -70,17 +70,31 @@ class ServiceListCreateView(generics.ListCreateAPIView):
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# actualizar y eliminar service
+# Actualizar y eliminar service
 class ServiceDetailsUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = None
 
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        image = request.data.get('image')
+
+        if isinstance(image, str) and image.startswith("http"):  # Verifica si image es una cadena y comienza con "http"
+            # No se proporciona una nueva imagen, no es necesario guardarla
+            request.data['image'] = instance.image  # Restauramos la URL de la imagen original
+            return super().update(request, *args, **kwargs)
+
+        if image:  # Si se proporciona una nueva imagen
+            return super().update(request, *args, **kwargs)
+
+        return super().update(request, *args, **kwargs)
+
     #def perform_destroy(self, instance):
     #    products_related = instance.product_set.count()
     #    if products_related > 0:
     #        raise serializers.ValidationError("No puedes eliminar esta service porque tiene productos relacionados.")
-#
+    #
     #    instance.delete()
     #    return Response({"detail": "Service eliminada con éxito."}, status=status.HTTP_200_OK)
