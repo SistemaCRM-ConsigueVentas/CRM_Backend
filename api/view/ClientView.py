@@ -7,6 +7,7 @@ from rest_framework.response import Response
 import os
 from django.conf import settings
 
+
 class PaginationFive(PageNumberPagination):
     page_size = 5
 
@@ -15,7 +16,6 @@ class ClientListCreateView(generics.ListCreateAPIView):
     serializer_class = CustomerSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = PaginationFive
-
     def upload_image(self):
         try:
             image = self.request.data.get('image')
@@ -31,7 +31,7 @@ class ClientListCreateView(generics.ListCreateAPIView):
                 return f'photos/default.jpeg'
         except Exception as e:
             return Response({"details": f"Error al guardar la imagen: {str(e)}"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
     def get_queryset(self):
         queryset = Customer.objects.all()
         search_param = self.request.query_params.get('search', None)
@@ -39,7 +39,7 @@ class ClientListCreateView(generics.ListCreateAPIView):
             queryset = queryset.filter(
                 name__icontains=search_param) | queryset.filter(
                 lastname__icontains=search_param) | queryset.filter(
-                document_number__icontains=search_param)
+                documentNumber__icontains=search_param)
         return queryset
 
 #Detalle, actualizar y eliminar cliente
