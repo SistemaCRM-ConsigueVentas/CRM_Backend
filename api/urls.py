@@ -68,8 +68,8 @@ urlpatterns = [
     path('promotions/delete/<int:pk>', views.PromotionDetailsUpdateDestroy.as_view(), name='promotion-destroy'),
     
     #------ SERVICE URLs ------#
-    path('services', views.ServiceListCreate.as_view(), name='service-list'),
-    path('services/create', views.ServiceListCreate.as_view(), name='service-create'),
+    path('services', views.ServiceListCreateView.as_view(), name='service-list'),
+    path('services/create', views.ServiceListCreateView.as_view(), name='service-create'),
     path('services/<int:pk>', views.ServiceDetailsUpdateDestroy.as_view(), name='service-detail'),
     path('services/update/<int:pk>', views.ServiceDetailsUpdateDestroy.as_view(), name='service-update'),
     path('services/delete/<int:pk>', views.ServiceDetailsUpdateDestroy.as_view(), name='service-destroy'),
