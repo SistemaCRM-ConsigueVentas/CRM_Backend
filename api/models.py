@@ -6,3 +6,4 @@ from api.model.ProductModel import Product
 from api.model.CategoryModel import Category
 from api.model.PromotionModel import Promotion
 from api.model.ServiceModel import Service
+from api.model.SaleDetailsServiceModel import SaleDetailsService
