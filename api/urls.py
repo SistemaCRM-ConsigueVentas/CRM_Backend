@@ -73,4 +73,11 @@ urlpatterns = [
     path('services/<int:pk>', views.ServiceDetailsUpdateDestroy.as_view(), name='service-detail'),
     path('services/update/<int:pk>', views.ServiceDetailsUpdateDestroy.as_view(), name='service-update'),
     path('services/delete/<int:pk>', views.ServiceDetailsUpdateDestroy.as_view(), name='service-destroy'),
-]
+
+    #------ SALEDETAILSSERVICE URLs ------#
+    path('saledetailservice', views.SaleDetailsServiceListCreate.as_view(), name='saledetailservice-list'),
+    path('saledetailservice/create', views.SaleDetailsServiceListCreate.as_view(), name='saledetailservice-create'),
+    path('saledetailservice/<int:pk>', views.SaleDetailsServiceUpdateDestroy.as_view(), name='saledetailservice-detail'),
+    path('saledetailservice/update/<int:pk>', views.SaleDetailsServiceUpdateDestroy.as_view(), name='saledetailservice-update'),
+    path('saledetailservice/delete/<int:pk>', views.SaleDetailsServiceUpdateDestroy.as_view(), name='saledetailservice-destroy'),
+]    
