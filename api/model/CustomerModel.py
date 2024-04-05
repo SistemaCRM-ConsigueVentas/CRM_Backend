@@ -9,7 +9,7 @@ class Customer(models.Model):
     lastname = models.CharField(max_length=40)
     document_type = models.IntegerField([(e.value,e.name) for e in DocumentTypeEnum])
     document_number = models.CharField(max_length=14, unique=True)
-    bitrthdate = models.DateField()
+    birthdate = models.DateField()
     email = models.CharField(max_length = 30)
     gender = models.IntegerField([(e.value,e.name) for e in GenderEnum])
     phone = models.CharField(max_length=30)
