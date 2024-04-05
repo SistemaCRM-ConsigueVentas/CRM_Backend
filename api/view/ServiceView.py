@@ -1,8 +1,14 @@
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework import generics, permissions, status, pagination
 from api.model.ServiceModel import Service
 from api.serializers.ServiceSerializer import ServiceSerializer
 from rest_framework.response import Response
 from rest_framework import serializers
+from PIL import Image
+import io
+
+from django.core.files.base import ContentFile
+from django.core.files.images import ImageFile
 
 import os
 import imghdr
@@ -81,15 +87,22 @@ class ServiceDetailsUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         image = request.data.get('image')
 
-        if isinstance(image, str) and image.startswith("http"):  # Verifica si image es una cadena y comienza con "http"
-            # No se proporciona una nueva imagen, no es necesario guardarla
-            request.data['image'] = instance.image  # Restauramos la URL de la imagen original
-            return super().update(request, *args, **kwargs)
+        # Hacer una copia mutable de request.data
+        data = request.data.copy()
 
-        if image:  # Si se proporciona una nueva imagen
-            return super().update(request, *args, **kwargs)
+        # Verificar si se proporciona una nueva imagen
+        if image:
+            try:
+                # Abrir la imagen y convertirla en un objeto InMemoryUploadedFile
+                img = Image.open(image)
+                img_io = io.BytesIO()
+                img.save(img_io, format='JPEG')
+                img_file = InMemoryUploadedFile(img_io, None, 'foo.jpg', 'image/jpeg', img_io.getbuffer().nbytes, None)
+                data['image'] = img_file
+            except Exception as e:
+                return Response({"details": f"Error al abrir la imagen: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return super().update(request, *args, **kwargs)
+        return super().update(request, data, *args, **kwargs)  # Usar la copia mutable de request.data
 
     #def perform_destroy(self, instance):
     #    products_related = instance.product_set.count()
