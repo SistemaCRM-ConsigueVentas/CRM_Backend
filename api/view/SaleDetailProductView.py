@@ -1,4 +1,4 @@
 from rest_framework import serializers
-from api.model.SaleDetailProductModel import SaleDetalProduct
+from api.model.SaleDetailsProductModel import SaleDetalProduct
 
 """ class SaleDetailProduct """
