@@ -10,7 +10,7 @@ class Service(models.Model):
     service_time = models.DurationField()
     maintenance = models.BooleanField(default=False)
     rate = models.DecimalField(max_digits=10, decimal_places=2)
-    img_url = models.CharField(max_length=150, null = True)
+    image = models.ImageField(upload_to="services")
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
