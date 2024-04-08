@@ -1,18 +1,14 @@
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from rest_framework import generics, permissions, status, pagination
+import os
+
+from django.conf import settings
+from django.core.files.uploadedfile import UploadedFile
+
+from rest_framework import (generics, pagination, permissions,status)
+from rest_framework.response import Response
+
 from api.model.ServiceModel import Service
 from api.serializers.ServiceSerializer import ServiceSerializer
-from rest_framework.response import Response
-from rest_framework import serializers
-from PIL import Image
-import io
 
-from django.core.files.base import ContentFile
-from django.core.files.images import ImageFile
-
-import os
-import imghdr
-from django.conf import settings
 
 #Crear services
 class ServiceRegisterView(generics.CreateAPIView):
@@ -86,28 +82,20 @@ class ServiceDetailsUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         image = request.data.get('image')
-
-        # Hacer una copia mutable de request.data
         data = request.data.copy()
 
-        # Verificar si se proporciona una nueva imagen
-        if image:
-            try:
-                # Abrir la imagen y convertirla en un objeto InMemoryUploadedFile
-                img = Image.open(image)
-                img_io = io.BytesIO()
-                img.save(img_io, format='JPEG')
-                img_file = InMemoryUploadedFile(img_io, None, 'foo.jpg', 'image/jpeg', img_io.getbuffer().nbytes, None)
-                data['image'] = img_file
-            except Exception as e:
-                return Response({"details": f"Error al abrir la imagen: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # Si 'image' no es un archivo, elimina el campo 'image' de los datos de solicitud
+        if image and not isinstance(image, UploadedFile):
+            del data['image']
+        elif 'image' in data and isinstance(data['image'], str) and data['image'].startswith("http"):
+            del data['image']
+        return super().update(request, data, *args, **kwargs)
 
-        return super().update(request, data, *args, **kwargs)  # Usar la copia mutable de request.data
 
-    #def perform_destroy(self, instance):
-    #    products_related = instance.product_set.count()
-    #    if products_related > 0:
-    #        raise serializers.ValidationError("No puedes eliminar esta service porque tiene productos relacionados.")
-    #
-    #    instance.delete()
-    #    return Response({"detail": "Service eliminada con éxito."}, status=status.HTTP_200_OK)
+    # def perform_destroy(self, instance):
+    #     sale_details_service_related = instance.sale_details_service_set.count()
+    #     if sale_details_service_related > 0:
+    #         raise ServiceSerializer.ValidationError("No puedes eliminar esta service porque tiene detalle de ventas.")
+    
+    #     instance.delete()
+    #     return Response({"detail": "Service eliminada con éxito."}, status=status.HTTP_200_OK)
