@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 from api.model.ServiceModel import Service
 from api.serializers.ServiceSerializer import ServiceSerializer
+from rest_framework import serializers
 
 
 #Crear services
@@ -92,10 +93,10 @@ class ServiceDetailsUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
         return super().update(request, data, *args, **kwargs)
 
 
-    # def perform_destroy(self, instance):
-    #     sale_details_service_related = instance.sale_details_service_set.count()
-    #     if sale_details_service_related > 0:
-    #         raise ServiceSerializer.ValidationError("No puedes eliminar esta service porque tiene detalle de ventas.")
-    
-    #     instance.delete()
-    #     return Response({"detail": "Service eliminada con éxito."}, status=status.HTTP_200_OK)
+    def perform_destroy(self, instance):
+        sale_details_service_related = instance.sales_details.count()
+        if sale_details_service_related > 0:
+            raise serializers.ValidationError("No puedes eliminar este servicio porque tiene detalle de ventas.")
+        
+        instance.delete()
+        return Response({"detail": "Servicio eliminado con éxito."}, status=status.HTTP_200_OK)
