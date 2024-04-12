@@ -19,11 +19,5 @@ class SaleDetailsProduct(models.Model):
     sale = models.ForeignKey(Sale, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
-    def save(self, *args, **kwargs):
-        # Calcula el total del ítem antes de guardar
-        total_without_tax = (self.quantity * self.unit_price) - self.discount
-        self.total_item_amount = total_without_tax + (total_without_tax * self.TAX_RATE)
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return f"SaleDetailsProduct - ID: {self.id}"
