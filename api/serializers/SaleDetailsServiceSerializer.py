@@ -13,7 +13,7 @@ class SaleDetailsServiceSerializer(serializers.ModelSerializer):
         fields = ['id', 'quantity', 'unit_price', 'discount', 'tax', 'total_item_amount', 'created_at', 'sale', 'service', 'sale_data']
         
     def get_sale_data(self, obj):
-        sale = obj.sale
+        sale = obj.sale 
         sale_serializer = SaleSerializer(sale)
         return sale_serializer.data
 
@@ -27,9 +27,19 @@ class SaleDetailsServiceSerializer(serializers.ModelSerializer):
         instance.unit_price = validated_data.get('unit_price', instance.unit_price)
         instance.discount = validated_data.get('discount', instance.discount)
         
-        # Recalculamos el total_item_amount automáticamente
+        # Recalculamos total_item_amount automáticamente
         total_item_amount = (instance.quantity * instance.unit_price) - instance.discount
         instance.total_item_amount = total_item_amount + (total_item_amount * SaleDetailsService.TAX_RATE)
+        
+        # Actualizamos Sale si se proporciona
+        sale_data = validated_data.pop('sale', None)
+        if sale_data:
+            instance.sale = sale_data
+        
+        # Actualizamos Service si se proporciona 
+        service_data = validated_data.pop('service', None)
+        if service_data:
+            instance.service = service_data
         
         instance.save()
         return instance
