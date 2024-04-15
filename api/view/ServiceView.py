@@ -1,12 +1,15 @@
-from rest_framework import generics, permissions, status, pagination
+import os
+
+from django.conf import settings
+from django.core.files.uploadedfile import UploadedFile
+
+from rest_framework import (generics, pagination, permissions,status)
+from rest_framework.response import Response
+
 from api.model.ServiceModel import Service
 from api.serializers.ServiceSerializer import ServiceSerializer
-from rest_framework.response import Response
 from rest_framework import serializers
 
-import os
-import imghdr
-from django.conf import settings
 
 #Crear services
 class ServiceRegisterView(generics.CreateAPIView):
@@ -80,21 +83,20 @@ class ServiceDetailsUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         image = request.data.get('image')
+        data = request.data.copy()
 
-        if isinstance(image, str) and image.startswith("http"):  # Verifica si image es una cadena y comienza con "http"
-            # No se proporciona una nueva imagen, no es necesario guardarla
-            request.data['image'] = instance.image  # Restauramos la URL de la imagen original
-            return super().update(request, *args, **kwargs)
+        # Si 'image' no es un archivo, elimina el campo 'image' de los datos de solicitud
+        if image and not isinstance(image, UploadedFile):
+            del data['image']
+        elif 'image' in data and isinstance(data['image'], str) and data['image'].startswith("http"):
+            del data['image']
+        return super().update(request, data, *args, **kwargs)
 
-        if image:  # Si se proporciona una nueva imagen
-            return super().update(request, *args, **kwargs)
 
-        return super().update(request, *args, **kwargs)
-
-    #def perform_destroy(self, instance):
-    #    products_related = instance.product_set.count()
-    #    if products_related > 0:
-    #        raise serializers.ValidationError("No puedes eliminar esta service porque tiene productos relacionados.")
-    #
-    #    instance.delete()
-    #    return Response({"detail": "Service eliminada con éxito."}, status=status.HTTP_200_OK)
+    def perform_destroy(self, instance):
+        sale_details_service_related = instance.sales_details.count()
+        if sale_details_service_related > 0:
+            raise serializers.ValidationError("No puedes eliminar este servicio porque tiene detalle de ventas.")
+        
+        instance.delete()
+        return Response({"detail": "Servicio eliminado con éxito."}, status=status.HTTP_200_OK)
