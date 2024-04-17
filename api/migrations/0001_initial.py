@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('lastname', models.CharField(max_length=40)),
                 ('document_type', models.CharField(choices=[(0, 'DNI'), (1, 'CEDULA'), (2, 'PASAPORTE'), (3, 'OTRO')], max_length=1)),
                 ('document_number', models.CharField(max_length=14, unique=True)),
-                ('bitrthdate', models.DateField()),
+                ('birthdate', models.DateField()),
                 ('email', models.CharField(max_length=30)),
                 ('gender', models.CharField(choices=[(0, 'MASCULINO'), (1, 'FEMENINO')], max_length=1)),
                 ('phone', models.CharField(max_length=30)),

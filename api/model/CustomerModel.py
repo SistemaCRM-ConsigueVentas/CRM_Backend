@@ -1,4 +1,6 @@
 from django.db import models
+import os
+from django.conf import settings
 from api.enums.DocumentTypeEnums import DocumentTypeEnum
 from api.enums.CustomerEnums import GenderEnum
 
@@ -18,10 +20,16 @@ class Customer(models.Model):
     province = models.CharField(max_length = 50)
     district = models.CharField(max_length = 50)
     country = models.CharField(max_length = 50)
-    image= models.ImageField(upload_to='customers')
+    image= models.ImageField(upload_to='customers', blank=True, null=True)
     #auditoría
     created_at = models.DateTimeField(auto_now_add=True)#Fecha de creacion
     active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.image:  # Si no se proporciona una imagen
+            default_image_path = os.path.join(settings.MEDIA_ROOT, 'photos', 'default.jpeg')  # Ruta de la imagen por defecto
+            self.image.save('defaut.jpeg', open(default_image_path, 'rb'), save=False)  # Guarda la imagen por defecto
+        super().save(*args, **kwargs)
