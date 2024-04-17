@@ -49,5 +49,5 @@ class ClientDetailUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     
     def perform_destroy(self, instance):
-        instance.state = False
+        instance.active = False
         instance.save()
