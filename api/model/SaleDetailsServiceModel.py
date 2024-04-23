@@ -18,7 +18,7 @@ class SaleDetailsService(models.Model):
     
     # Relación muchos a uno
     sale = models.ForeignKey(Sale, on_delete=models.CASCADE)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='sales_details')
 
     def save(self, *args, **kwargs):
         # Calcula el total del ítem antes de guardar
