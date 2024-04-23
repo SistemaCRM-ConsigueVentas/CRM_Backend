@@ -8,6 +8,7 @@ import os
 from django.conf import settings
 
 
+
 class PaginationFive(PageNumberPagination):
     page_size = 5
 
@@ -41,13 +42,29 @@ class ClientListCreateView(generics.ListCreateAPIView):
                 lastname__icontains=search_param) | queryset.filter(
                 documentNumber__icontains=search_param)
         return queryset
-
 #Detalle, actualizar y eliminar cliente
 class ClientDetailUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     permission_classes = [IsAuthenticated]
     
+    def perform_update(self, serializer):
+        instance = serializer.instance
+        serializer.save()
+        old_image_path = instance.image
+        print("Old image path:", old_image_path)
+        print(" holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        new_image = self.request.data.get('image', None)
+        if old_image_path and new_image:
+            full_old_image_path = os.path.join(settings.MEDIA_ROOT, old_image_path)
+            if os.path.exists(full_old_image_path):
+                os.remove(full_old_image_path)
+            # Actualizar la ruta de la imagen en el modelo
+            instance.image_path = new_image.name
+            instance.save()
+    
     def perform_destroy(self, instance):
         instance.active = False
         instance.save()
+
+    
