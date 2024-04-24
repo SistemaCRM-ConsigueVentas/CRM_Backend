@@ -1,16 +1,18 @@
+import os
+from django.conf import settings
+from django.core.files.storage import default_storage
+
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from api.models import *
 from api.serializers.CustomerSerializer import *   
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-import os
-from django.conf import settings
-
 
 
 class PaginationFive(PageNumberPagination):
     page_size = 5
+
 
 #Listar y crear cliente
 class ClientListCreateView(generics.ListCreateAPIView):
@@ -42,26 +44,40 @@ class ClientListCreateView(generics.ListCreateAPIView):
                 lastname__icontains=search_param) | queryset.filter(
                 documentNumber__icontains=search_param)
         return queryset
+    
+    
 #Detalle, actualizar y eliminar cliente
 class ClientDetailUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     permission_classes = [IsAuthenticated]
+
+
+    def get_queryset(self, pk=None):
+        if pk is None:  
+            return self.get_serializer().Meta.model.objects.filter(active=True)
+        else:
+            return self.get_serializer().Meta.model.objects.filter(id=pk , active =True).first()
+        
+
+    def patch(self,request,pk=None):
+        if self.get_queryset(pk):
+            customer_serializer  = self.serializer_class(self.get_queryset(pk))
+            return Response(customer_serializer.data, status=status.HTTP_200_OK)
+        return Response( {'error' : 'No existe un cliente con esos datos'}, status=status.HTTP_400_BAD_REQUEST )
     
-    def perform_update(self, serializer):
-        instance = serializer.instance
-        serializer.save()
-        old_image_path = instance.image
-        print("Old image path:", old_image_path)
-        print(" holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-        new_image = self.request.data.get('image', None)
-        if old_image_path and new_image:
-            full_old_image_path = os.path.join(settings.MEDIA_ROOT, old_image_path)
-            if os.path.exists(full_old_image_path):
-                os.remove(full_old_image_path)
-            # Actualizar la ruta de la imagen en el modelo
-            instance.image_path = new_image.name
-            instance.save()
+    
+    def put(self, request , pk=None):
+        if self.get_queryset(pk):
+            customer_serializer =self.serializer_class(self.get_queryset(pk),data= request.data, partial=True)
+            if customer_serializer.is_valid():
+                customer_serializer.save()
+                return Response(customer_serializer.data , status= status.HTTP_200_OK)
+            return Response(customer_serializer.errors, status= status.HTTP_400_BAD_REQUEST)
+        
+    
+    def delete(self,request,pk=None):
+        return Response(request)
     
     def perform_destroy(self, instance):
         instance.active = False
