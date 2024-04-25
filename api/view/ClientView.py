@@ -36,7 +36,7 @@ class ClientListCreateView(generics.ListCreateAPIView):
             return Response({"details": f"Error al guardar la imagen: {str(e)}"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def get_queryset(self):
-        queryset = Customer.objects.all()
+        queryset = Customer.objects.filter(active=True)
         search_param = self.request.query_params.get('search', None)
         if search_param:
             queryset = queryset.filter(
@@ -67,20 +67,23 @@ class ClientDetailUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return Response( {'error' : 'No existe un cliente con esos datos'}, status=status.HTTP_400_BAD_REQUEST )
     
     
-    def put(self, request , pk=None):
+    def put(self,request , pk=None):
         if self.get_queryset(pk):
             customer_serializer =self.serializer_class(self.get_queryset(pk),data= request.data, partial=True)
             if customer_serializer.is_valid():
                 customer_serializer.save()
+                print(request.data)
                 return Response(customer_serializer.data , status= status.HTTP_200_OK)
             return Response(customer_serializer.errors, status= status.HTTP_400_BAD_REQUEST)
         
     
     def delete(self,request,pk=None):
-        return Response(request)
+        customer = self.get_queryset().filter(id=pk).first()
+        if customer:
+            customer.active = False
+            customer.save()
+            return Response({'message': 'Customer eliminado correctamente'}, status=status.HTTP_200_OK)
+        return Response({'error':'No existe un customer con esos datos'}, status=status.HTTP_400_BAD_REQUEST)
     
-    def perform_destroy(self, instance):
-        instance.active = False
-        instance.save()
 
     

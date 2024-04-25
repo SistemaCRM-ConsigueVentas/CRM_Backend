@@ -13,7 +13,7 @@ class Customer(models.Model):
     document_type = models.IntegerField([(e.value,e.name) for e in DocumentTypeEnum])
     document_number = models.CharField(max_length=14, unique=True)
     birthdate = models.DateField()
-    email = models.CharField(max_length = 30)
+    email = models.CharField(max_length = 30, unique=True)
     gender = models.IntegerField([(e.value,e.name) for e in GenderEnum])
     phone = models.CharField(max_length=30)
     address = models.CharField(max_length = 40)
