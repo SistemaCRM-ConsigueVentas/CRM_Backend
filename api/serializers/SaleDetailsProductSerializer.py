@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from api.models import SaleDetailsProduct, Sale
-from .ProductSerializer import ProductSerializer
+from api.models import SaleDetailsProduct, Sale, Product
 from .SaleSerializer import SaleSerializer
+from .ProductSerializer import ProductSerializer
 from decimal import Decimal
 
 class SaleDetailsProductSerializer(serializers.ModelSerializer):
@@ -10,12 +10,15 @@ class SaleDetailsProductSerializer(serializers.ModelSerializer):
     sale_obj = SaleSerializer(source='sale', read_only=True)
     sale = serializers.PrimaryKeyRelatedField(queryset=Sale.objects.all(), write_only=True)
     
+    product_obj = ProductSerializer(source='product', read_only=True)
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), write_only=True)
+    
     tax = serializers.DecimalField(max_digits=5, decimal_places=2, read_only=True)
     total_item_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
 
     class Meta:
         model = SaleDetailsProduct
-        fields = ['id', 'quantity', 'unit_price', 'discount', 'tax', 'total_item_amount', 'created_at', 'sale_obj', 'product', 'sale']
+        fields = ['id', 'quantity', 'unit_price', 'discount', 'tax', 'total_item_amount', 'created_at', 'sale_obj', 'product_obj', 'product','sale']
 
     def create(self, validated_data):
         sale = validated_data.pop('sale')
