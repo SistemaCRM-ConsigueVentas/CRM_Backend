@@ -1,9 +1,12 @@
 from rest_framework import serializers
 from api.models import SaleDetailsProduct, Sale
+from .ProductSerializer import ProductSerializer
 from .SaleSerializer import SaleSerializer
 from decimal import Decimal
 
 class SaleDetailsProductSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+    """ product = serializers.CharField(source='product.name', read_only=True) """
     
     sale_obj = SaleSerializer(source='sale', read_only=True)
     sale = serializers.PrimaryKeyRelatedField(queryset=Sale.objects.all(), write_only=True)
