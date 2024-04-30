@@ -2,15 +2,16 @@ from rest_framework import serializers
 from api.model.SaleDetailsServiceModel import SaleDetailsService
 from api.model.SaleModel import Sale
 from api.serializers.SaleSerializer import SaleSerializer
+from api.serializers.ServiceSerializer import ServiceSerializer
 
 class SaleDetailsServiceSerializer(serializers.ModelSerializer):
+    sale = SaleSerializer(read_only = True)
+    service = ServiceSerializer(read_only = True)
     tax = serializers.DecimalField(max_digits=5, decimal_places=2, read_only=True)
     total_item_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
-    sale_data = serializers.SerializerMethodField()
-
     class Meta:
         model = SaleDetailsService
-        fields = ['id', 'quantity', 'unit_price', 'discount', 'tax', 'total_item_amount', 'created_at', 'sale', 'service', 'sale_data']
+        fields = ['id', 'quantity', 'unit_price', 'discount', 'tax', 'total_item_amount', 'created_at', 'sale', 'service']
         
     def get_sale_data(self, obj):
         sale = obj.sale 
