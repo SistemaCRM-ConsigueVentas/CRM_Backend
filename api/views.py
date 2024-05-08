@@ -9,3 +9,4 @@ from api.view.CategoryView import *
 from api.view.PromotionView import *
 from api.view.ServiceView import *
 from api.view.SaleDetailsServiceView import *
+from api.view.SaleDetailsProductView import *

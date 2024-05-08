@@ -1,15 +1,18 @@
+import os
+from django.conf import settings
+from django.core.files.storage import default_storage
+
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from api.models import *
 from api.serializers.CustomerSerializer import *   
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-import os
-from django.conf import settings
 
 
 class PaginationFive(PageNumberPagination):
     page_size = 5
+
 
 #Listar y crear cliente
 class ClientListCreateView(generics.ListCreateAPIView):
@@ -33,7 +36,7 @@ class ClientListCreateView(generics.ListCreateAPIView):
             return Response({"details": f"Error al guardar la imagen: {str(e)}"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def get_queryset(self):
-        queryset = Customer.objects.all()
+        queryset = Customer.objects.filter(active=True)
         search_param = self.request.query_params.get('search', None)
         if search_param:
             queryset = queryset.filter(
@@ -41,13 +44,46 @@ class ClientListCreateView(generics.ListCreateAPIView):
                 lastname__icontains=search_param) | queryset.filter(
                 documentNumber__icontains=search_param)
         return queryset
-
+    
+    
 #Detalle, actualizar y eliminar cliente
 class ClientDetailUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     permission_classes = [IsAuthenticated]
+
+
+    def get_queryset(self, pk=None):
+        if pk is None:  
+            return self.get_serializer().Meta.model.objects.filter(active=True)
+        else:
+            return self.get_serializer().Meta.model.objects.filter(id=pk , active =True).first()
+        
+
+    def patch(self,request,pk=None):
+        if self.get_queryset(pk):
+            customer_serializer  = self.serializer_class(self.get_queryset(pk))
+            return Response(customer_serializer.data, status=status.HTTP_200_OK)
+        return Response( {'error' : 'No existe un cliente con esos datos'}, status=status.HTTP_400_BAD_REQUEST )
     
-    def perform_destroy(self, instance):
-        instance.state = False
-        instance.save()
+    
+    def put(self,request , pk=None):
+        if self.get_queryset(pk):
+            customer_serializer =self.serializer_class(self.get_queryset(pk),data= request.data, partial=True)
+            if customer_serializer.is_valid():
+                customer_serializer.save()
+                print(request.data)
+                return Response(customer_serializer.data , status= status.HTTP_200_OK)
+            return Response(customer_serializer.errors, status= status.HTTP_400_BAD_REQUEST)
+        
+    
+    def delete(self,request,pk=None):
+        customer = self.get_queryset().filter(id=pk).first()
+        if customer:
+            customer.active = False
+            customer.save()
+            return Response({'message': 'Customer eliminado correctamente'}, status=status.HTTP_200_OK)
+        return Response({'error':'No existe un customer con esos datos'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+    
