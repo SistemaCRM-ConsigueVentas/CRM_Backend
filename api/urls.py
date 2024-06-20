@@ -87,4 +87,11 @@ urlpatterns = [
     path('saledetailproduct/<int:pk>', views.SaleDetailsProductUpdateDestroy.as_view(), name='saledetailproduct-detail'),
     path('saledetailproduct/update/<int:pk>', views.SaleDetailsProductUpdateDestroy.as_view(), name='saledetailproduct-update'),
     path('saledetailproduct/delete/<int:pk>', views.SaleDetailsProductUpdateDestroy.as_view(), name='saledetailproduct-destroy'),
-]    
+
+    #------ PROVIDER URLs ------#
+    path('providers', views.ProviderListCreate.as_view(), name='provider-list'),
+    path('providers/create', views.ProviderListCreate.as_view(), name='provider-create'),
+    path('providers/<int:pk>', views.ProviderDetailUpdateDestroy.as_view(), name='provider-detail'),
+    path('providers/update/<int:pk>', views.ProviderDetailUpdateDestroy.as_view(), name='provider-update'),
+    path('providers/delete/<int:pk>', views.ProviderDetailUpdateDestroy.as_view(), name='provider-destroy'),
+]

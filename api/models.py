@@ -8,3 +8,4 @@ from api.model.PromotionModel import Promotion
 from api.model.ServiceModel import Service
 from api.model.SaleDetailsServiceModel import SaleDetailsService
 from api.model.SaleDetailsProductModel import SaleDetailsProduct
+from api.model.ProviderModel import Provider

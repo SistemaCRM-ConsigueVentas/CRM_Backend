@@ -10,3 +10,4 @@ from api.view.PromotionView import *
 from api.view.ServiceView import *
 from api.view.SaleDetailsServiceView import *
 from api.view.SaleDetailsProductView import *
+from api.view.ProviderView import *
