@@ -109,4 +109,10 @@ urlpatterns = [
     path('purchases/update/<int:pk>', views.PurchaseDetailUpdateDestroy.as_view(), name='purchase-update'),
     path('purchases/delete/<int:pk>', views.PurchaseDetailUpdateDestroy.as_view(), name='purchase-destroy'),
 
+    #------ DETAILPURCHASE URLs ------#
+    path('detailpurchases', views.DetailPurchaseListCreate.as_view(), name='detailpurchase-list'),
+    path('detailpurchases/create', views.DetailPurchaseListCreate.as_view(), name='detailpurchase-create'),
+    path('detailpurchases/<int:pk>', views.DetailPurchaseDetailUpdateDestroy.as_view(), name='detailpurchase-detail'),
+    path('detailpurchases/update/<int:pk>', views.DetailPurchaseDetailUpdateDestroy.as_view(), name='detailpurchase-update'),
+    path('detailpurchases/delete/<int:pk>', views.DetailPurchaseDetailUpdateDestroy.as_view(), name='detailpurchase-destroy'),
 ]
