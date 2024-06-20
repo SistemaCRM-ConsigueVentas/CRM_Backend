@@ -9,8 +9,7 @@ class DetailPurchaseListCreate(generics.ListCreateAPIView):
     serializer_class = DetailPurchaseSerializer
     permission_classes = [IsAuthenticated]
 
-#Detalle, actualizar y eliminar 
-class DetailPurchaseDetailUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+#Detalle, actualizar y eliminar class DetailPurchaseDetailUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = DetailPurchase.objects.all()
     serializer_class = DetailPurchaseSerializer
     permission_classes = [IsAuthenticated]
