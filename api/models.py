@@ -10,3 +10,4 @@ from api.model.SaleDetailsServiceModel import SaleDetailsService
 from api.model.SaleDetailsProductModel import SaleDetailsProduct
 from api.model.ProviderModel import Provider
 from api.model.PaymentModel import Payment
+from api.model.PurchaseModel import Purchase

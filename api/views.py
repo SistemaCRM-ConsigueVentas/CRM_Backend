@@ -12,3 +12,4 @@ from api.view.SaleDetailsServiceView import *
 from api.view.SaleDetailsProductView import *
 from api.view.ProviderView import *
 from api.view.PaymentView import *
+from api.view.PurchaseView import *

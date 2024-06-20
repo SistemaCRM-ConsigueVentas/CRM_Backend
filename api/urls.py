@@ -101,4 +101,12 @@ urlpatterns = [
     path('payments/<int:pk>', views.PaymentDetailUpdateDestroy.as_view(), name='payment-detail'),
     path('payments/update/<int:pk>', views.PaymentDetailUpdateDestroy.as_view(), name='payment-update'),
     path('payments/delete/<int:pk>', views.PaymentDetailUpdateDestroy.as_view(), name='payment-destroy'),
+
+    #------ PURCHASE URLs ------#
+    path('purchases', views.PurchaseListCreate.as_view(), name='purchase-list'),
+    path('purchases/create', views.PurchaseListCreate.as_view(), name='purchase-create'),
+    path('purchases/<int:pk>', views.PurchaseDetailUpdateDestroy.as_view(), name='purchase-detail'),
+    path('purchases/update/<int:pk>', views.PurchaseDetailUpdateDestroy.as_view(), name='purchase-update'),
+    path('purchases/delete/<int:pk>', views.PurchaseDetailUpdateDestroy.as_view(), name='purchase-destroy'),
+
 ]
