@@ -7,10 +7,10 @@ class SaleDetailsService(models.Model):
     quantity = models.IntegerField()
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.DecimalField(max_digits=5, decimal_places=2)
-    
+
     # Definimos el impuesto como una constante
     TAX_RATE = Decimal('0.18')
-    tax = models.DecimalField(max_digits=5, decimal_places=2, default=TAX_RATE * 100)
+    tax = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     total_item_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
@@ -23,7 +23,8 @@ class SaleDetailsService(models.Model):
     def save(self, *args, **kwargs):
         # Calcula el total del ítem antes de guardar
         total_without_tax = (self.quantity * self.unit_price) - self.discount
-        self.total_item_amount = total_without_tax + (total_without_tax * self.TAX_RATE)
+        self.tax = total_without_tax * self.TAX_RATE
+        self.total_item_amount = total_without_tax + self.tax
         super().save(*args, **kwargs)
 
     def __str__(self):
