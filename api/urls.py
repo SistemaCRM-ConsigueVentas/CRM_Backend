@@ -94,4 +94,11 @@ urlpatterns = [
     path('providers/<int:pk>', views.ProviderDetailUpdateDestroy.as_view(), name='provider-detail'),
     path('providers/update/<int:pk>', views.ProviderDetailUpdateDestroy.as_view(), name='provider-update'),
     path('providers/delete/<int:pk>', views.ProviderDetailUpdateDestroy.as_view(), name='provider-destroy'),
+
+    #------ PAYMENT URLs ------#
+    path('payments', views.PaymentListCreate.as_view(), name='payment-list'),
+    path('payments/create', views.PaymentListCreate.as_view(), name='payment-create'),
+    path('payments/<int:pk>', views.PaymentDetailUpdateDestroy.as_view(), name='payment-detail'),
+    path('payments/update/<int:pk>', views.PaymentDetailUpdateDestroy.as_view(), name='payment-update'),
+    path('payments/delete/<int:pk>', views.PaymentDetailUpdateDestroy.as_view(), name='payment-destroy'),
 ]
