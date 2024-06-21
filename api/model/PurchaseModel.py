@@ -3,6 +3,7 @@ from api.models import Provider
 
 class Purchase(models.Model):
     id = models.AutoField(primary_key=True)
+    description = models.CharField(max_length=50)
     date_purchase = models.DateField()
     number_bill = models.CharField(max_length=50)
     total = models.DecimalField(max_digits=10, decimal_places=2)
