@@ -23,7 +23,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         elif action == 'delete':
             await self.delete_notification(data['id'])
         
-        # Respond to the client
+        # Respuesta al cliente
         await self.send(text_data=json.dumps({
             'message': 'Notification handled successfully'
         }))
