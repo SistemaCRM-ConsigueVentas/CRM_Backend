@@ -1,5 +1,8 @@
-import json 
+import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from asgiref.sync import sync_to_async
+from api.model.NotificationModel import Notification
+from api.model.UserModel import User
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -29,31 +32,33 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         }))
 
     async def create_notification(self, title, description, date, user_id):
-        # Crear una nueva notificación
-        from .models import Notification
-        from api.model.UserModel import User
-
-        user = await User.objects.get(id=user_id)
-        notification = Notification.objects.create(
-            title=title,
-            description=description,
-            date=date,
-            user_id=user
-        )
+        try:
+            user = await sync_to_async(User.objects.get)(id=user_id)
+            notification = await sync_to_async(Notification.objects.create)(
+                title=title,
+                description=description,
+                date=date,
+                user_id=user
+            )
+        except User.DoesNotExist:
+            # Si no se encuentra el usuario
+            pass
 
     async def update_notification(self, data):
-        # Actualizar una notificación existente
-        from .models import Notification
-
-        notification = await Notification.objects.get(id=data['id'])
-        notification.title = data['title']
-        notification.description = data['description']
-        notification.date = data['date']
-        await notification.save()
+        try:
+            notification = await sync_to_async(Notification.objects.get)(id=data['id'])
+            notification.title = data['title']
+            notification.description = data['description']
+            notification.date = data['date']
+            await sync_to_async(notification.save)()
+        except Notification.DoesNotExist:
+            # En caso no se encuentra la notificación
+            pass
 
     async def delete_notification(self, notification_id):
-        # Eliminar una notificación
-        from .models import Notification
-
-        notification = await Notification.objects.get(id=notification_id)
-        await notification.delete()
+        try:
+            notification = await sync_to_async(Notification.objects.get)(id=notification_id)
+            await sync_to_async(notification.delete)()
+        except Notification.DoesNotExist:
+            # En caso no se encuentra la notificación
+            pass

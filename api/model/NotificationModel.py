@@ -10,4 +10,4 @@ class Notification(models.Model):
     status = models.IntegerField(default=1)
 
     def __str__(self):
-        return self.id
+        return f"Notification {self.id}"
