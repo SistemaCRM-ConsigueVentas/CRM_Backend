@@ -6,6 +6,7 @@ class Notification(models.Model):
     description = models.TextField(null=False)
     date = models.DateField()
     user_id =models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.BooleanField(default=True)
 
 
     def __str__(self):
