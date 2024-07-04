@@ -117,7 +117,7 @@ urlpatterns = [
     path('detailpurchases/delete/<int:pk>', views.DetailPurchaseDetailUpdateDestroy.as_view(), name='detailpurchase-destroy'),
 
     #------ NOTIFICATION URLs ------#
-    path('notification', views.NotificationListCreate.as_view(), name='notificationll-list'),
+    path('notification', views.NotificationListCreate.as_view(), name='notification-list'),
     path('notification/create', views.NotificationListCreate.as_view(), name='notification-create'),
     path('notification/<int:pk>', views.NotificationDetailUpdateDestroy.as_view(), name='notification-detail'),
     path('notification/update/<int:pk>', views.NotificationDetailUpdateDestroy.as_view(), name='notification-update'),
