@@ -9,7 +9,7 @@ class DetailPurchaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DetailPurchase
-        fields = ['id', 'date_purchase', 'item', 'price', 'quantity', 'total', 'purchase_id','purchase_obj']
+        fields = ['id', 'date_purchase', 'item', 'price', 'quantity', 'total','description', 'purchase_id','purchase_obj']
     
     def create(self, validated_data):
         purchase = validated_data.pop('purchase')
