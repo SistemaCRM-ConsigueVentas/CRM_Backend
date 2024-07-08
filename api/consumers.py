@@ -1,48 +1,60 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
+from django.core.paginator import Paginator
 from api.model.NotificationModel import Notification
 from api.model.UserModel import User
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        self.room_group_name = 'notifications'
+        
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+        
+        ## print(f'Channel name: {self.channel_name}')        
         await self.accept()
 
     async def disconnect(self, close_code):
-        pass
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         action = data.get('action')
-        title = data.get('title')
-        description = data.get('description')
-        user_id = data.get('user_id')
-        date = data.get('date')
-        
+
         if action == 'create':
-            await self.create_notification(title, description, date, user_id)
+            await self.create_notification(data)
         elif action == 'update':
             await self.update_notification(data)
         elif action == 'delete':
             await self.delete_notification(data['id'])
-        
-        # Respuesta al cliente
-        await self.send(text_data=json.dumps({
-            'message': 'Notification handled successfully'
-        }))
+        elif action == 'list':
+            await self.list_notifications(data)
 
-    async def create_notification(self, title, description, date, user_id):
+    async def create_notification(self, data):
         try:
-            user = await sync_to_async(User.objects.get)(id=user_id)
+            user = await sync_to_async(User.objects.get)(id=data['user_id'])
             notification = await sync_to_async(Notification.objects.create)(
-                title=title,
-                description=description,
-                date=date,
+                title=data['title'],
+                description=data['description'],
+                date=data['date'],
                 user_id=user
             )
         except User.DoesNotExist:
-            # Si no se encuentra el usuario
             pass
+
+        await self.channel_layer.group_send(
+            'notifications',
+            {
+                'type': 'notification_message',
+                'message': 'Notification created'
+            }
+        )
 
     async def update_notification(self, data):
         try:
@@ -52,13 +64,56 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             notification.date = data['date']
             await sync_to_async(notification.save)()
         except Notification.DoesNotExist:
-            # En caso no se encuentra la notificación
             pass
+
+        await self.channel_layer.group_send(
+            'notifications',
+            {
+                'type': 'notification_message',
+                'message': 'Notification updated'
+            }
+        )
 
     async def delete_notification(self, notification_id):
         try:
             notification = await sync_to_async(Notification.objects.get)(id=notification_id)
             await sync_to_async(notification.delete)()
         except Notification.DoesNotExist:
-            # En caso no se encuentra la notificación
             pass
+
+        await self.channel_layer.group_send(
+            'notifications',
+            {
+                'type': 'notification_message',
+                'message': 'Notification deleted'
+            }
+        )
+
+    async def list_notifications(self, data):
+        page_number = data.get('page', 1)
+        notifications = await sync_to_async(list)(Notification.objects.all().order_by('-date'))
+        paginator = Paginator(notifications, 10)
+        page_obj = paginator.get_page(page_number)
+        notifications_data = [
+            {
+                'id': notification.id,
+                'title': notification.title,
+                'description': notification.description,
+                'date': notification.date.isoformat(),
+                'user_id': notification.user_id.id
+            }
+            for notification in page_obj.object_list
+        ]
+
+        await self.send(text_data=json.dumps({
+            'notifications': notifications_data,
+            'has_next': page_obj.has_next(),
+            'has_previous': page_obj.has_previous(),
+            'page': page_number,
+            'total_pages': paginator.num_pages
+        }))
+
+    async def notification_message(self, event):
+        await self.send(text_data=json.dumps({
+            'message': event['message']
+        }))
