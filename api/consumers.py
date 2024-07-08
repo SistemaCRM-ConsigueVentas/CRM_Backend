@@ -14,7 +14,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         
-        ## print(f'Channel name: {self.channel_name}')        
+        print(f'Channel name: {self.channel_name}')  
         await self.accept()
 
     async def disconnect(self, close_code):
