@@ -1,6 +1,6 @@
 from django.db import models
 from api.models import Provider
-from api.models import DetailPurchase
+from api.model.DetailPurchaseModel import DetailPurchase
 
 class Purchase(models.Model):
     id = models.AutoField(primary_key=True)
