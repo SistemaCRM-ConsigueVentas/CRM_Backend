@@ -17,6 +17,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         print(f'Channel name: {self.channel_name}')  
         await self.accept()
 
+        await self.list_notifications({'page': 1})
+
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             self.room_group_name,
@@ -35,6 +37,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             await self.delete_notification(data['id'])
         elif action == 'list':
             await self.list_notifications(data)
+        elif action == 'single-list':
+            await self.list_single_notification(data['id'])
 
     async def create_notification(self, data):
         try:
@@ -52,7 +56,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'notifications',
             {
                 'type': 'notification_message',
-                'message': 'Notification created'
+                'message': notification
             }
         )
 
@@ -106,6 +110,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         ]
 
         await self.send(text_data=json.dumps({
+            'type': 'list-all',
             'notifications': notifications_data,
             'has_next': page_obj.has_next(),
             'has_previous': page_obj.has_previous(),
@@ -113,7 +118,26 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'total_pages': paginator.num_pages
         }))
 
+    async def list_single_notification(self, notification_id):
+        try:
+            notification = await sync_to_async(Notification.objects.get)(id=notification_id)
+            notification_data = {
+                'id': notification.id,
+                'title': notification.title,
+                'description': notification.description,
+                'date': notification.date.isoformat(),
+                'user_id': notification.user_id.id
+            }
+
+            await self.send(text_data=json.dumps({
+                'type': 'single-list',
+                'notification': notification_data
+            }))
+        except Notification.DoesNotExist:
+            pass
+
     async def notification_message(self, event):
         await self.send(text_data=json.dumps({
-            'message': event['message']
+            'type': 'single-list',
+            'data': event['message']
         }))

@@ -50,6 +50,13 @@ INSTALLED_APPS = [
     'django_rest_passwordreset' # Para cuando olvidamos la contraseña
 ]
 
+# Conexion con el Websocket
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
