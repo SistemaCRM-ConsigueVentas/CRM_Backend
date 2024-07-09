@@ -6,7 +6,7 @@ class Notification(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.TextField(null=False)
     description = models.TextField(null=False)
-    date = models.DateField()
+    date = models.DateTimeField()
     user_id =models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.IntegerField(default=1)
     list_archives = models.TextField(default="[]")
