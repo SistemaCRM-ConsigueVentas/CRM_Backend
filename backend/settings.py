@@ -50,7 +50,10 @@ INSTALLED_APPS = [
     'django_rest_passwordreset' # Para cuando olvidamos la contraseña
 ]
 
+<<<<<<< HEAD
 # Conexion con el Websocket
+=======
+>>>>>>> b814df333a8ea7609c8c2d2e8ec6a05233b503f5
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
