@@ -39,6 +39,10 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             await self.list_notifications(data)
         elif action == 'single-list':
             await self.list_single_notification(data['id'])
+        elif action == 'archive':
+            await self.archive_notification(data['notification_id'], data['user_id'])
+        elif action == 'unarchive':
+            await self.unarchive_notification(data['notification_id'], data['user_id'])
 
     async def create_notification(self, data):
         try:
@@ -49,6 +53,24 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 date=data['date'],
                 user_id=user
             )
+
+            notification_data = {
+                'id': notification.id,
+                'title': notification.title,
+                'description': notification.description,
+                'date': notification.date, #O date.strftime('%Y-%m-%d %H:%M:%S') para designar formato
+                'user_id': notification.user_id.id,
+                'status': notification.status,
+                'list_archives': json.loads(notification.list_archives)
+            }
+
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'notification_message',
+                    'message': notification_data
+                }
+            )
         except User.DoesNotExist:
             pass
 
@@ -56,7 +78,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'notifications',
             {
                 'type': 'notification_message',
-                'message': notification
+                'message': notification_data
             }
         )
 
@@ -67,31 +89,41 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             notification.description = data['description']
             notification.date = data['date']
             await sync_to_async(notification.save)()
+
+            notification_data = {
+                'id': notification.id,
+                'title': notification.title,
+                'description': notification.description,
+                'date': notification.date, #O date.strftime('%Y-%m-%d %H:%M:%S') para designar formato
+                'user_id': notification.user_id.id,
+                'status': notification.status,
+                'list_archives': json.loads(notification.list_archives)
+            }
+
+            await self.channel_layer.group_send(
+                'notifications',
+                {
+                    'type': 'notification_message',
+                    'message': 'Notification updated'
+                }
+            )
         except Notification.DoesNotExist:
             pass
-
-        await self.channel_layer.group_send(
-            'notifications',
-            {
-                'type': 'notification_message',
-                'message': 'Notification updated'
-            }
-        )
 
     async def delete_notification(self, notification_id):
         try:
             notification = await sync_to_async(Notification.objects.get)(id=notification_id)
             await sync_to_async(notification.delete)()
-        except Notification.DoesNotExist:
-            pass
 
-        await self.channel_layer.group_send(
+            await self.channel_layer.group_send(
             'notifications',
             {
                 'type': 'notification_message',
                 'message': 'Notification deleted'
             }
-        )
+            )
+        except Notification.DoesNotExist:
+            pass
 
     async def list_notifications(self, data):
         page_number = data.get('page', 1)
@@ -103,8 +135,10 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 'id': notification.id,
                 'title': notification.title,
                 'description': notification.description,
-                'date': notification.date.isoformat(),
-                'user_id': notification.user_id.id
+                'date': notification.date, #O date.strftime('%Y-%m-%d %H:%M:%S') para designar formato
+                'user_id': notification.user_id.id,
+                'status': notification.status,
+                'list_archives': json.loads(notification.list_archives)
             }
             for notification in page_obj.object_list
         ]
@@ -117,22 +151,54 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'page': page_number,
             'total_pages': paginator.num_pages
         }))
-
-    async def list_single_notification(self, notification_id):
+        
+    async def archive_notification(self, notification_id, user_id):
         try:
             notification = await sync_to_async(Notification.objects.get)(id=notification_id)
+            notification.add_to_archived(user_id)
+
             notification_data = {
                 'id': notification.id,
                 'title': notification.title,
                 'description': notification.description,
-                'date': notification.date.isoformat(),
-                'user_id': notification.user_id.id
+                'date': notification.date, #O date.strftime('%Y-%m-%d %H:%M:%S') para designar formato
+                'user_id': notification.user_id.id,
+                'status': notification.status,
+                'list_archives': json.loads(notification.list_archives)
             }
 
-            await self.send(text_data=json.dumps({
-                'type': 'single-list',
-                'notification': notification_data
-            }))
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'notification_message',
+                    'message': notification_data
+                }
+            )
+        except Notification.DoesNotExist:
+            pass
+
+    async def unarchive_notification(self, notification_id, user_id):
+        try:
+            notification = await sync_to_async(Notification.objects.get)(id=notification_id)
+            notification.remove_from_archived(user_id)
+
+            notification_data = {
+                'id': notification.id,
+                'title': notification.title,
+                'description': notification.description,
+                'date': notification.date, #O date.strftime('%Y-%m-%d %H:%M:%S') para designar formato
+                'user_id': notification.user_id.id,
+                'status': notification.status,
+                'list_archives': json.loads(notification.list_archives)
+            }
+
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'notification_message',
+                    'message': notification_data
+                }
+            )
         except Notification.DoesNotExist:
             pass
 
