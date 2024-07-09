@@ -11,6 +11,8 @@ class DetailPurchase(models.Model):
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
+    purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE)
+    
     def save(self, *args, **kwargs):
         self.total = self.price * self.quantity
         super(DetailPurchase, self).save(*args, **kwargs)
