@@ -15,18 +15,18 @@ class Notification(models.Model):
         return f"Notification {self.id}"
     
     def add_to_archived(self, user_id):
-        archived_list = json.loads(self.list_archived)
+        archived_list = json.loads(self.list_archives)
         if user_id not in archived_list:
             archived_list.append(user_id)
-            self.list_archived = json.dumps(archived_list)
+            self.list_archives = json.dumps(archived_list)
             self.save()
 
     def remove_from_archived(self, user_id):
-        archived_list = json.loads(self.list_archived)
+        archived_list = json.loads(self.list_archives)
         if user_id in archived_list:
             archived_list.remove(user_id)
-            self.list_archived = json.dumps(archived_list)
+            self.list_archives = json.dumps(archived_list)
             self.save()
 
     def get_archived_users(self):
-        return json.loads(self.list_archived)
+        return json.loads(self.list_archives)
