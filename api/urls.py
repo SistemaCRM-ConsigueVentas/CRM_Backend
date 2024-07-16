@@ -115,3 +115,4 @@ urlpatterns = [
     path('detailpurchases/<int:pk>', views.DetailPurchaseDetailUpdateDestroy.as_view(), name='detailpurchase-detail'),
     path('detailpurchases/update/<int:pk>', views.DetailPurchaseDetailUpdateDestroy.as_view(), name='detailpurchase-update'),
     path('detailpurchases/delete/<int:pk>', views.DetailPurchaseDetailUpdateDestroy.as_view(), name='detailpurchase-destroy'),
+]
