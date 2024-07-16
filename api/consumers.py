@@ -187,8 +187,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def unarchive_notification(self, notification_id, user_id):
         try:
             notification = await sync_to_async(Notification.objects.get)(id=notification_id)
+            
             await sync_to_async(notification.remove_from_archived)(user_id)
-
             await self.list_notifications({'type': 'replace-list'})
 
         except Notification.DoesNotExist:
