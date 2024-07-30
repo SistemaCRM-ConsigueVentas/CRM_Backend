@@ -17,7 +17,10 @@ class SaleSerializer(serializers.ModelSerializer):
         read_only_fields = ('total',)
 
     def create(self, validated_data):
-        sale = Sale.objects.create(**validated_data)
+        customer = validated_data.pop('customer')
+        user = validated_data.pop('user')
+        # aqui la solucion, la instancia Sale definida con campo relacional
+        sale = Sale.objects.create(customer=customer, user=user, **validated_data)
         self._update_total(sale)
         return sale
 

@@ -44,6 +44,7 @@ urlpatterns = [
     path('sales/<int:pk>', views.SaleDetailUpdateDestroyView.as_view(), name='sale-detail'),
     path('sales/update/<int:pk>', views.SaleDetailUpdateDestroyView.as_view(), name='sale-update'),
     path('sales/delete/<int:pk>', views.SaleDetailUpdateDestroyView.as_view(), name='sale-delete'),
+    path('sales/range-days/', views.SalesInRangeView.as_view(), name='sales-in-range'),
     
     #------ PRODUCT URLs ------#
     path('products', views.ProductListCreateView.as_view(), name='product-list'),
